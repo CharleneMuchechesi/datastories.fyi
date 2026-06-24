@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Seat at the Table — Girls' Education in Southern Africa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+:root{
+  --ink:#1A1B18;
+  --paper:#F7F4EE;
+  --paper2:#EDE9E0;
+  --rule:#C8C2B4;
+  --teal:#1D6B6B;
+  --teal-light:#2E9090;
+  --teal-dim:rgba(29,107,107,0.12);
+  --rose:#C0443A;
+  --rose-dim:rgba(192,68,58,0.12);
+  --gold:#B8860B;
+  --muted:#7A756A;
+  --radius:4px;
+  --maxw:1120px;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth; background:var(--paper);}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:15px;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+}
+::selection{background:var(--teal); color:#fff;}
+
+.serif{font-family:'Libre Baskerville',Georgia,serif;}
+.mono{font-family:'DM Mono',monospace;}
+
+a{color:var(--teal);}
+
+/* —— WRAP —— */
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+
+/* —— NAV —— */
+nav.top{
+  border-bottom:1px solid var(--rule);
+  background:var(--paper);
+  position:sticky; top:0; z-index:100;
+}
+.nav-inner{
+  max-width:var(--maxw); margin:0 auto; padding:14px 32px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-brand{
+  font-family:'Libre Baskerville',serif; font-size:0.92rem;
+  font-style:italic; color:var(--ink); letter-spacing:0.01em;
+}
+.nav-links{display:flex; gap:28px;}
+.nav-links a{
+  font-size:0.8rem; font-weight:500; color:var(--muted);
+  text-decoration:none; letter-spacing:0.04em; text-transform:uppercase;
+  transition:color .15s;
+}
+.nav-links a:hover{color:var(--teal);}
+.nav-tag{
+  font-size:0.7rem; font-family:'DM Mono'; color:var(--teal);
+  border:1px solid var(--teal); padding:2px 8px; border-radius:2px;
+}
+
+/* —— HERO —— */
+.hero{padding:72px 0 56px; border-bottom:1px solid var(--rule);}
+.hero-eyebrow{
+  font-family:'DM Mono'; font-size:0.72rem; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:18px;
+}
+.hero-eyebrow span{
+  display:inline-block; width:28px; height:1px;
+  background:var(--teal); vertical-align:middle; margin-right:10px;
+}
+.hero h1{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(2.2rem, 5.5vw, 4.2rem);
+  line-height:1.1; font-weight:700; max-width:16ch;
+  color:var(--ink);
+}
+.hero h1 em{font-style:italic; color:var(--teal);}
+.hero-sub{
+  margin-top:24px; max-width:58ch;
+  color:var(--muted); font-size:1.05rem; line-height:1.7;
+}
+.hero-meta{
+  display:flex; flex-wrap:wrap; gap:32px;
+  margin-top:36px; padding-top:28px; border-top:1px solid var(--rule);
+}
+.hero-stat{display:flex; flex-direction:column;}
+.hero-stat .v{
+  font-family:'Libre Baskerville',serif;
+  font-size:2rem; font-weight:700; color:var(--teal); line-height:1;
+}
+.hero-stat .l{
+  font-size:0.75rem; font-family:'DM Mono'; text-transform:uppercase;
+  letter-spacing:0.06em; color:var(--muted); margin-top:5px;
+}
+.hero-note{
+  margin-top:28px; font-size:0.8rem; color:var(--muted);
+  border-left:2px solid var(--rule); padding-left:12px;
+  max-width:60ch;
+}
+
+/* —— SECTION CHROME —— */
+section{padding:56px 0;}
+section+section{border-top:1px solid var(--rule);}
+.sec-head{
+  display:grid; grid-template-columns:1fr auto;
+  align-items:baseline; margin-bottom:8px; gap:12px;
+}
+.sec-head h2{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(1.3rem,2.5vw,1.8rem); font-weight:700;
+}
+.sec-sub{color:var(--muted); max-width:66ch; margin-bottom:32px; font-size:0.95rem;}
+.sec-label{
+  font-family:'DM Mono'; font-size:0.68rem; color:var(--muted);
+  text-transform:uppercase; letter-spacing:0.08em;
+}
+.source-note{font-size:0.74rem; color:var(--muted); font-style:italic; margin-top:12px;}
+
+/* —— INSIGHT BOX —— */
+.insight{
+  background:var(--teal-dim);
+  border-left:3px solid var(--teal);
+  padding:14px 18px; border-radius:0 var(--radius) var(--radius) 0;
+  font-size:0.91rem; margin-top:16px;
+}
+.insight b{color:var(--teal);}
+.insight.warn{background:var(--rose-dim); border-color:var(--rose);}
+.insight.warn b{color:var(--rose);}
+
+/* —— CARD GRID —— */
+.card{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:24px;
+}
+.card h3{font-weight:600; font-size:0.92rem; margin-bottom:4px;}
+.card .hint{color:var(--muted); font-size:0.78rem; margin-bottom:18px;}
+.g2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+.g3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.chart-h{height:320px; position:relative;}
+.chart-h-sm{height:240px; position:relative;}
+
+/* —— COUNTRY CARDS —— */
+.country-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:16px; margin-top:4px;
+}
+.cc{
+  background:#fff; border:1px solid var(--rule); border-radius:var(--radius);
+  padding:18px; cursor:pointer; transition:border-color .15s, box-shadow .15s;
+}
+.cc:hover{border-color:var(--teal); box-shadow:0 2px 12px rgba(29,107,107,0.1);}
+.cc.selected{border-color:var(--teal); background:var(--teal-dim);}
+.cc-top{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.cc-flag{
+  width:38px; height:38px; border-radius:50%;
+  background:var(--teal-dim); border:1px solid var(--teal);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono'; font-size:0.65rem; color:var(--teal); font-weight:500;
+  flex:none;
+}
+.cc-name{font-weight:600; font-size:0.9rem;}
+.cc-iso{font-size:0.72rem; color:var(--muted); font-family:'DM Mono';}
+
+/* GPI gauge */
+.gpi-gauge-wrap{margin-bottom:12px;}
+.gpi-label{
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:0.74rem; margin-bottom:5px;
+}
+.gpi-label .name{color:var(--muted); font-family:'DM Mono'; text-transform:uppercase; letter-spacing:0.04em;}
+.gpi-label .val{font-weight:600; font-family:'DM Mono'; font-size:0.82rem;}
+.gpi-track{background:var(--paper2); border-radius:3px; height:7px; position:relative; overflow:visible;}
+.gpi-fill{height:100%; border-radius:3px; transition:width .8s cubic-bezier(.4,0,.2,1); max-width:100%;}
+.gpi-midline{
+  position:absolute; left:50%; top:-4px;
+  width:1px; height:15px; background:var(--rule);
+}
+.cc-stats{
+  display:flex; gap:0; border-top:1px solid var(--rule); padding-top:10px; margin-top:4px;
+}
+.cc-stat{flex:1; text-align:center; font-size:0.72rem; color:var(--muted);}
+.cc-stat b{display:block; font-size:0.88rem; color:var(--ink); font-family:'DM Mono'; margin-bottom:2px;}
+
+/* —— FILTERS —— */
+.filters{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:20px;}
+.filter-pill{
+  border:1px solid var(--rule); background:#fff; color:var(--muted);
+  padding:7px 16px; border-radius:20px; font-size:0.78rem; font-weight:500;
+  cursor:pointer; transition:all .12s;
+}
+.filter-pill:hover{border-color:var(--teal); color:var(--teal);}
+.filter-pill.active{background:var(--teal); color:#fff; border-color:var(--teal);}
+
+/* —— TREND CHART SECTION —— */
+.trend-selector{
+  display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;
+}
+.ts-btn{
+  border:1px solid var(--rule); background:#fff; color:var(--muted);
+  padding:5px 12px; border-radius:3px; font-size:0.75rem; font-family:'DM Mono';
+  cursor:pointer; transition:all .12s; letter-spacing:0.02em;
+}
+.ts-btn:hover{border-color:var(--teal); color:var(--teal);}
+.ts-btn.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+/* —— SCATTER —— */
+.scatter-wrap{position:relative; height:360px;}
+
+/* —— DIVIDER —— */
+.press-rule{
+  display:flex; align-items:center; gap:16px;
+  margin:0; color:var(--rule); font-size:0.7rem; font-family:'DM Mono';
+  letter-spacing:0.06em; text-transform:uppercase;
+}
+.press-rule::before,.press-rule::after{
+  content:""; flex:1; height:1px; background:var(--rule);
+}
+
+/* —— FINDINGS TABLE —— */
+.findings{width:100%; border-collapse:collapse; font-size:0.84rem; margin-top:4px;}
+.findings th{
+  text-align:left; font-family:'DM Mono'; font-size:0.67rem;
+  text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);
+  padding:10px 12px; border-bottom:2px solid var(--ink);
+}
+.findings td{padding:10px 12px; border-bottom:1px solid var(--rule);}
+.findings tr:last-child td{border-bottom:none;}
+.findings tr:hover td{background:var(--paper2);}
+.findings td.num{font-family:'DM Mono'; text-align:right;}
+.badge{
+  display:inline-block; padding:2px 8px; border-radius:2px; font-size:0.7rem;
+  font-family:'DM Mono'; font-weight:500;
+}
+.badge.ahead{background:rgba(29,107,107,0.15); color:var(--teal);}
+.badge.close{background:rgba(184,134,11,0.15); color:var(--gold);}
+.badge.behind{background:rgba(192,68,58,0.15); color:var(--rose);}
+
+/* —— FOOTER —— */
+footer{
+  border-top:2px solid var(--ink);
+  background:var(--ink); color:rgba(255,255,255,0.6);
+  padding:40px 0;
+}
+footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; align-items:flex-start;}
+footer .brand{
+  font-family:'Libre Baskerville',serif; font-style:italic;
+  font-size:1rem; color:#fff;
+}
+footer .credits{font-size:0.78rem; line-height:1.7;}
+footer a{color:rgba(255,255,255,0.7);}
+
+/* responsive */
+@media(max-width:820px){
+  .g2,.g3{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .hero h1{font-size:2rem;}
+  .hero-meta{gap:20px;}
+  .country-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:480px){.country-grid{grid-template-columns:1fr;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important;}}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="nav-inner">
+    <div class="nav-brand">A Seat at the Table</div>
+    <nav class="nav-links">
+      <a href="#parity">Parity</a>
+      <a href="#countries">Countries</a>
+      <a href="#trends">Trends</a>
+      <a href="#completion">Completion</a>
+      <a href="#findings">Summary</a>
+    </nav>
+    <div class="nav-tag">Portfolio · Data Analysis</div>
+  </div>
+</nav>
+
+<main>
+
+<section class="hero">
+<div class="wrap">
+  <div class="hero-eyebrow"><span></span>Girls' Education · Southern Africa · 2000–2020 · World Bank WDI</div>
+  <h1>Where <em>are</em> the girls in Southern Africa's classrooms?</h1>
+  <p class="hero-sub">Sixteen countries. Two decades. One dataset from the World Bank's World Development Indicators, parsed to surface the enrollment gaps, the parity reversals, and the completion gaps that aggregate numbers tend to bury.</p>
+  <div class="hero-meta" id="heroMeta"></div>
+  <p class="hero-note">The Gender Parity Index (GPI) measures the ratio of female to male enrollment. A GPI of 1.0 = exact parity. Below 1.0 = boys outnumber girls. Above 1.0 = girls outnumber boys — which, as Lesotho shows, can itself signal a different kind of inequity.</p>
+</div>
+</section>
+
+<section id="parity">
+<div class="wrap">
+  <div class="sec-head">
+    <h2 class="serif">Regional GPI trajectory, 2000–2020</h2>
+    <span class="sec-label">01 — Parity</span>
+  </div>
+  <p class="sec-sub">The SADC regional average for both primary and secondary school gender parity over two decades — a macro view before drilling into individual countries.</p>
+  <div class="g2">
+    <div class="card">
+      <h3>Primary school GPI</h3>
+      <div class="hint">Female ÷ male gross enrollment · 16-country SADC average</div>
+      <div class="chart-h"><canvas id="chartPrimGPI"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Secondary school GPI</h3>
+      <div class="hint">Female ÷ male gross enrollment · 16-country SADC average</div>
+      <div class="chart-h"><canvas id="chartSecGPI"></canvas></div>
+    </div>
+  </div>
+  <div class="insight" id="insightParity"></div>
+  <p class="source-note">Source: World Bank World Development Indicators (WDI), 2021 release. UNESCO Institute for Statistics.</p>
+</div>
+</section>
+
+<section id="countries">
+<div class="wrap">
+  <div class="sec-head">
+    <h2 class="serif">Country-by-country snapshot</h2>
+    <span class="sec-label">02 — Countries</span>
+  </div>
+  <p class="sec-sub">Each card shows the latest available Gender Parity Index for primary and secondary levels, primary completion rate for girls, and share of girls out of school. Click a card to load that country's trends below.</p>
+  <div class="filters" id="filterPills">
+    <button class="filter-pill active" data-filter="all">All 16</button>
+    <button class="filter-pill" data-filter="ahead">Girls ahead (GPI ≥ 1.0)</button>
+    <button class="filter-pill" data-filter="close">Near parity (0.9–1.0)</button>
+    <button class="filter-pill" data-filter="behind">Girls behind (GPI &lt; 0.9)</button>
+  </div>
+  <div class="country-grid" id="countryGrid"></div>
+  <div class="insight" id="insightCards" style="margin-top:20px;"></div>
+</div>
+</section>
+
+<section id="trends">
+<div class="wrap">
+  <div class="sec-head">
+    <h2 class="serif">Country trend explorer</h2>
+    <span class="sec-label">03 — Trends</span>
+  </div>
+  <p class="sec-sub">Select a country from the cards above — or click a name below — to view its gender parity and enrollment trajectory over time.</p>
+  <div class="trend-selector" id="trendSelector"></div>
+  <div class="g2">
+    <div class="card">
+      <h3 id="trendTitle1">GPI over time</h3>
+      <div class="hint" id="trendHint1">Primary and secondary gender parity index, 2000–2020</div>
+      <div class="chart-h"><canvas id="chartTrendGPI"></canvas></div>
+    </div>
+    <div class="card">
+      <h3 id="trendTitle2">Primary completion rate</h3>
+      <div class="hint" id="trendHint2">Female vs. male, % of relevant age group</div>
+      <div class="chart-h"><canvas id="chartTrendCompletion"></canvas></div>
+    </div>
+  </div>
+  <p class="source-note" style="margin-top:8px;">Data gaps reflect years with no survey data — a data visibility problem common to the region.</p>
+</div>
+</section>
+
+<section id="completion">
+<div class="wrap">
+  <div class="sec-head">
+    <h2 class="serif">Primary completion: girls vs. boys</h2>
+    <span class="sec-label">04 — Completion</span>
+  </div>
+  <p class="sec-sub">Finishing primary school is a different question from enrolling. This chart compares the latest available female and male primary completion rates across all 16 countries.</p>
+  <div class="card">
+    <h3>Completion rate by country (latest available year)</h3>
+    <div class="hint">Female (teal) and male (charcoal) primary completion rates — ranked by female rate</div>
+    <div style="height:420px; position:relative;"><canvas id="chartCompletion"></canvas></div>
+  </div>
+  <div class="insight warn" id="insightCompletion"></div>
+</div>
+</section>
+
+<section id="findings">
+<div class="wrap">
+  <div class="sec-head">
+    <h2 class="serif">Summary findings</h2>
+    <span class="sec-label">05 — Findings</span>
+  </div>
+  <p class="sec-sub">All 16 countries ranked by latest secondary GPI. Status interpreted as: ahead ≥ 1.0, near parity 0.9–1.0, behind &lt; 0.9.</p>
+  <table class="findings" id="findingsTable"></table>
+  <div class="insight" style="margin-top:20px;">
+    <b>What this data doesn't tell us:</b> enrollment ≠ attendance ≠ learning outcomes. A GPI of 1.0 at primary level is necessary but nowhere near sufficient — it says nothing about whether girls who enroll stay, learn, or translate schooling into economic agency. The next layer of this analysis would pair GPI with out-of-school rates, poverty headcounts, and child marriage prevalence to build a fuller picture.
+  </div>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div class="wrap">
+  <div>
+    <div class="brand">A Seat at the Table</div>
+    <div class="credits" style="margin-top:8px;">
+      Data: World Bank World Development Indicators (CC BY 4.0) · 2021 release<br>
+      Built by Charlene · Portfolio project · HTML / Chart.js · No backend
+    </div>
+  </div>
+  <div class="credits">
+    Indicators used: SE.PRM.ENRR.FE/MA · SE.SEC.ENRR.FE/MA<br>
+    SE.PRM.CMPT.FE/MA.ZS · SE.PRM.ENRR.GPI · SE.SEC.ENRR.GPI<br>
+    SE.ADT.1524.LT.FE.ZS · SE.PRM.TENR.FE
+  </div>
+</div>
+</footer>
+
+<script>
+const DATA = {"years": ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"], "country_cards": [{"country": "Lesotho", "iso": "LSO", "prim_gpi": 0.95, "sec_gpi": 1.35, "sec_gpi_year": "2017", "tert_gpi": 1.35, "prim_completion_f": 93.53, "out_of_school_f": 2.04, "youth_lit_f": 93.97}, {"country": "Namibia", "iso": "NAM", "prim_gpi": 0.97, "sec_gpi": 1.14, "sec_gpi_year": "2007", "tert_gpi": 1.49, "prim_completion_f": 96.92, "out_of_school_f": 2.43, "youth_lit_f": 96.2}, {"country": "Botswana", "iso": "BWA", "prim_gpi": 0.98, "sec_gpi": 1.09, "sec_gpi_year": "2008", "tert_gpi": 1.32, "prim_completion_f": 102.38, "out_of_school_f": 10.46, "youth_lit_f": 99.14}, {"country": "Tanzania", "iso": "TZA", "prim_gpi": 1.02, "sec_gpi": 1.08, "sec_gpi_year": "2019", "tert_gpi": 0.66, "prim_completion_f": 71.89, "out_of_school_f": 11.55, "youth_lit_f": 84.64}, {"country": "Comoros", "iso": "COM", "prim_gpi": 1.0, "sec_gpi": 1.07, "sec_gpi_year": "2018", "tert_gpi": 0.81, "prim_completion_f": 77.23, "out_of_school_f": 18.17, "youth_lit_f": 78.3}, {"country": "South Africa", "iso": "ZAF", "prim_gpi": 0.96, "sec_gpi": 1.07, "sec_gpi_year": "2018", "tert_gpi": 1.32, "prim_completion_f": 92.12, "out_of_school_f": 10.17, "youth_lit_f": 96.88}, {"country": "Seychelles", "iso": "SYC", "prim_gpi": 1.05, "sec_gpi": 1.06, "sec_gpi_year": "2019", "tert_gpi": 1.55, "prim_completion_f": 103.14, "out_of_school_f": 1.55, "youth_lit_f": 99.6}, {"country": "Madagascar", "iso": "MDG", "prim_gpi": 1.02, "sec_gpi": 1.04, "sec_gpi_year": "2019", "tert_gpi": 0.95, "prim_completion_f": 65.78, "out_of_school_f": 21.79, "youth_lit_f": 80.68}, {"country": "Mauritius", "iso": "MUS", "prim_gpi": 1.03, "sec_gpi": 1.02, "sec_gpi_year": "2019", "tert_gpi": 1.29, "prim_completion_f": 100.95, "out_of_school_f": 0.94, "youth_lit_f": 99.35}, {"country": "Eswatini", "iso": "SWZ", "prim_gpi": 0.92, "sec_gpi": 0.99, "sec_gpi_year": "2016", "tert_gpi": 0.94, "prim_completion_f": 95.57, "out_of_school_f": 17.24, "youth_lit_f": 96.7}, {"country": "Zimbabwe", "iso": "ZWE", "prim_gpi": 0.98, "sec_gpi": 0.96, "sec_gpi_year": "2013", "tert_gpi": 0.84, "prim_completion_f": 98.85, "out_of_school_f": 9.69, "youth_lit_f": 93.19}, {"country": "Mozambique", "iso": "MOZ", "prim_gpi": 0.93, "sec_gpi": 0.89, "sec_gpi_year": "2017", "tert_gpi": 0.81, "prim_completion_f": 51.29, "out_of_school_f": 3.72, "youth_lit_f": 65.49}, {"country": "Malawi", "iso": "MWI", "prim_gpi": 1.03, "sec_gpi": 0.83, "sec_gpi_year": "2019", "tert_gpi": 0.62, "prim_completion_f": 85.03, "out_of_school_f": 2.29, "youth_lit_f": 73.39}, {"country": "Angola", "iso": "AGO", "prim_gpi": 0.87, "sec_gpi": 0.64, "sec_gpi_year": "2016", "tert_gpi": 0.83, "prim_completion_f": 33.55, "out_of_school_f": 28.52, "youth_lit_f": 70.59}, {"country": "Congo, Dem. Rep.", "iso": "COD", "prim_gpi": 0.94, "sec_gpi": 0.64, "sec_gpi_year": "2015", "tert_gpi": 0.56, "prim_completion_f": 70.33, "out_of_school_f": null, "youth_lit_f": 79.71}, {"country": "Zambia", "iso": "ZMB", "prim_gpi": 1.02, "sec_gpi": null, "sec_gpi_year": null, "tert_gpi": 0.74, "prim_completion_f": 78.58, "out_of_school_f": 12.97, "youth_lit_f": 91.63}], "trend_data": {"Angola": {"prim_f": [{"year": "2008", "value": 96.44}, {"year": "2009", "value": 94.88}, {"year": "2010", "value": 94.06}, {"year": "2011", "value": 92.46}, {"year": "2015", "value": 105.89}], "prim_m": [{"year": "2008", "value": 114.03}, {"year": "2009", "value": 113.49}, {"year": "2010", "value": 117.65}, {"year": "2011", "value": 146.94}, {"year": "2015", "value": 121.14}], "sec_f": [{"year": "2000", "value": 11.05}, {"year": "2001", "value": 12.16}, {"year": "2002", "value": 13.6}, {"year": "2008", "value": 18.48}, {"year": "2009", "value": 19.61}, {"year": "2010", "value": 21.26}, {"year": "2011", "value": 20.72}, {"year": "2016", "value": 39.74}], "prim_gpi": [{"year": "2008", "value": 0.85}, {"year": "2009", "value": 0.84}, {"year": "2010", "value": 0.8}, {"year": "2011", "value": 0.63}, {"year": "2015", "value": 0.87}], "sec_gpi": [{"year": "2000", "value": 0.82}, {"year": "2001", "value": 0.78}, {"year": "2002", "value": 0.83}, {"year": "2008", "value": 0.77}, {"year": "2009", "value": 0.76}, {"year": "2010", "value": 0.68}, {"year": "2011", "value": 0.64}, {"year": "2016", "value": 0.64}], "completion_f": [{"year": "2008", "value": 34.63}, {"year": "2009", "value": 34.35}, {"year": "2010", "value": 33.92}, {"year": "2011", "value": 33.55}], "completion_m": [{"year": "2008", "value": 43.83}, {"year": "2009", "value": 43.29}, {"year": "2010", "value": 45.78}, {"year": "2011", "value": 59.01}], "oos_f": [{"year": "2008", "value": 23.5}, {"year": "2009", "value": 24.67}, {"year": "2010", "value": 25.35}, {"year": "2011", "value": 28.52}]}, "Botswana": {"prim_f": [{"year": "2000", "value": 110.52}, {"year": "2001", "value": 111.46}, {"year": "2002", "value": 111.14}, {"year": "2003", "value": 110.96}, {"year": "2004", "value": 110.06}, {"year": "2005", "value": 110.43}, {"year": "2006", "value": 110.4}, {"year": "2007", "value": 108.53}, {"year": "2008", "value": 107.32}, {"year": "2009", "value": 106.59}, {"year": "2012", "value": 104.1}, {"year": "2013", "value": 103.65}, {"year": "2014", "value": 102.14}, {"year": "2015", "value": 102.06}], "prim_m": [{"year": "2000", "value": 110.33}, {"year": "2001", "value": 111.38}, {"year": "2002", "value": 111.9}, {"year": "2003", "value": 111.73}, {"year": "2004", "value": 111.7}, {"year": "2005", "value": 111.86}, {"year": "2006", "value": 112.52}, {"year": "2007", "value": 111.12}, {"year": "2008", "value": 109.65}, {"year": "2009", "value": 109.77}, {"year": "2012", "value": 106.04}, {"year": "2013", "value": 106.33}, {"year": "2014", "value": 105.26}, {"year": "2015", "value": 104.39}], "sec_f": [{"year": "2000", "value": 82.58}, {"year": "2001", "value": 81.9}, {"year": "2002", "value": 83.49}, {"year": "2003", "value": 84.13}, {"year": "2004", "value": 85.21}, {"year": "2005", "value": 84.8}, {"year": "2006", "value": 87.2}, {"year": "2007", "value": 87.45}, {"year": "2008", "value": 83.52}], "prim_gpi": [{"year": "2000", "value": 1.0}, {"year": "2001", "value": 1.0}, {"year": "2002", "value": 0.99}, {"year": "2003", "value": 0.99}, {"year": "2004", "value": 0.99}, {"year": "2005", "value": 0.99}, {"year": "2006", "value": 0.98}, {"year": "2007", "value": 0.98}, {"year": "2008", "value": 0.98}, {"year": "2009", "value": 0.97}, {"year": "2012", "value": 0.98}, {"year": "2013", "value": 0.97}, {"year": "2014", "value": 0.97}, {"year": "2015", "value": 0.98}], "sec_gpi": [{"year": "2000", "value": 1.06}, {"year": "2001", "value": 1.04}, {"year": "2002", "value": 1.05}, {"year": "2003", "value": 1.05}, {"year": "2004", "value": 1.04}, {"year": "2005", "value": 1.03}, {"year": "2006", "value": 1.05}, {"year": "2007", "value": 1.06}, {"year": "2008", "value": 1.09}], "completion_f": [{"year": "2000", "value": 99.27}, {"year": "2001", "value": 102.12}, {"year": "2002", "value": 102.21}, {"year": "2003", "value": 101.91}, {"year": "2004", "value": 100.87}, {"year": "2005", "value": 101.69}, {"year": "2006", "value": 104.98}, {"year": "2007", "value": 100.52}, {"year": "2008", "value": 101.38}, {"year": "2009", "value": 101.9}, {"year": "2012", "value": 102.99}, {"year": "2013", "value": 102.38}], "completion_m": [{"year": "2000", "value": 94.39}, {"year": "2001", "value": 96.01}, {"year": "2002", "value": 97.53}, {"year": "2003", "value": 96.84}, {"year": "2004", "value": 95.96}, {"year": "2005", "value": 93.79}, {"year": "2006", "value": 98.18}, {"year": "2007", "value": 96.14}, {"year": "2008", "value": 97.6}, {"year": "2009", "value": 100.27}, {"year": "2012", "value": 99.46}, {"year": "2013", "value": 98.97}], "oos_f": [{"year": "2000", "value": 11.99}, {"year": "2001", "value": 10.66}, {"year": "2002", "value": 10.79}, {"year": "2003", "value": 10.65}, {"year": "2004", "value": 11.32}, {"year": "2005", "value": 9.31}, {"year": "2006", "value": 8.95}, {"year": "2007", "value": 10.46}, {"year": "2008", "value": 11.77}, {"year": "2009", "value": 12.67}, {"year": "2012", "value": 10.05}, {"year": "2013", "value": 10.24}, {"year": "2014", "value": 10.46}]}, "Congo, Dem. Rep.": {"prim_f": [{"year": "2002", "value": 59.02}, {"year": "2007", "value": 83.71}, {"year": "2008", "value": 92.65}, {"year": "2009", "value": 92.79}, {"year": "2010", "value": 93.04}, {"year": "2011", "value": 94.12}, {"year": "2012", "value": 98.85}, {"year": "2013", "value": 101.28}, {"year": "2014", "value": 104.9}, {"year": "2015", "value": 107.58}, {"year": "2018", "value": 114.68}], "prim_m": [{"year": "2002", "value": 74.83}, {"year": "2007", "value": 102.43}, {"year": "2008", "value": 110.16}, {"year": "2009", "value": 108.12}, {"year": "2010", "value": 106.89}, {"year": "2011", "value": 108.13}, {"year": "2012", "value": 112.05}, {"year": "2013", "value": 111.76}, {"year": "2014", "value": 115.39}, {"year": "2015", "value": 108.37}, {"year": "2018", "value": 122.19}], "sec_f": [{"year": "2007", "value": 25.45}, {"year": "2008", "value": 28.16}, {"year": "2009", "value": 29.83}, {"year": "2010", "value": 30.13}, {"year": "2011", "value": 32.04}, {"year": "2012", "value": 32.12}, {"year": "2013", "value": 32.82}, {"year": "2014", "value": 34.86}, {"year": "2015", "value": 35.98}], "prim_gpi": [{"year": "2002", "value": 0.79}, {"year": "2007", "value": 0.82}, {"year": "2008", "value": 0.84}, {"year": "2009", "value": 0.86}, {"year": "2010", "value": 0.87}, {"year": "2011", "value": 0.87}, {"year": "2012", "value": 0.88}, {"year": "2013", "value": 0.91}, {"year": "2014", "value": 0.91}, {"year": "2015", "value": 0.99}, {"year": "2018", "value": 0.94}], "sec_gpi": [{"year": "2007", "value": 0.53}, {"year": "2008", "value": 0.56}, {"year": "2009", "value": 0.56}, {"year": "2010", "value": 0.58}, {"year": "2011", "value": 0.59}, {"year": "2012", "value": 0.59}, {"year": "2013", "value": 0.62}, {"year": "2014", "value": 0.62}, {"year": "2015", "value": 0.64}], "completion_f": [{"year": "2002", "value": 34.29}, {"year": "2007", "value": 44.78}, {"year": "2008", "value": 49.69}, {"year": "2009", "value": 51.79}, {"year": "2010", "value": 54.74}, {"year": "2011", "value": 54.94}, {"year": "2012", "value": 60.61}, {"year": "2013", "value": 62.68}, {"year": "2015", "value": 70.33}], "completion_m": [{"year": "2002", "value": 51.05}, {"year": "2007", "value": 66.01}, {"year": "2008", "value": 71.25}, {"year": "2009", "value": 74.35}, {"year": "2010", "value": 72.47}, {"year": "2011", "value": 76.11}, {"year": "2012", "value": 81.1}, {"year": "2013", "value": 76.79}, {"year": "2015", "value": 69.49}], "oos_f": []}, "Comoros": {"prim_f": [{"year": "2000", "value": 95.14}, {"year": "2002", "value": 100.96}, {"year": "2003", "value": 99.49}, {"year": "2004", "value": 101.61}, {"year": "2007", "value": 98.36}, {"year": "2008", "value": 104.14}, {"year": "2011", "value": 98.88}, {"year": "2013", "value": 103.78}, {"year": "2014", "value": 101.2}, {"year": "2017", "value": 97.24}, {"year": "2018", "value": 99.42}], "prim_m": [{"year": "2000", "value": 110.98}, {"year": "2002", "value": 122.67}, {"year": "2003", "value": 120.82}, {"year": "2004", "value": 114.55}, {"year": "2007", "value": 109.39}, {"year": "2008", "value": 112.99}, {"year": "2011", "value": 116.86}, {"year": "2013", "value": 110.17}, {"year": "2014", "value": 108.62}, {"year": "2017", "value": 101.58}, {"year": "2018", "value": 99.59}], "sec_f": [{"year": "2002", "value": 33.33}, {"year": "2003", "value": 36.53}, {"year": "2004", "value": 38.0}, {"year": "2013", "value": 61.11}, {"year": "2014", "value": 63.14}, {"year": "2017", "value": 57.21}, {"year": "2018", "value": 61.41}], "prim_gpi": [{"year": "2000", "value": 0.86}, {"year": "2002", "value": 0.82}, {"year": "2003", "value": 0.82}, {"year": "2004", "value": 0.89}, {"year": "2007", "value": 0.9}, {"year": "2008", "value": 0.92}, {"year": "2011", "value": 0.85}, {"year": "2013", "value": 0.94}, {"year": "2014", "value": 0.93}, {"year": "2017", "value": 0.96}, {"year": "2018", "value": 1.0}], "sec_gpi": [{"year": "2002", "value": 0.85}, {"year": "2003", "value": 0.84}, {"year": "2004", "value": 0.76}, {"year": "2013", "value": 1.04}, {"year": "2014", "value": 1.07}, {"year": "2017", "value": 1.06}, {"year": "2018", "value": 1.07}], "completion_f": [{"year": "2002", "value": 54.58}, {"year": "2003", "value": 53.79}, {"year": "2004", "value": 60.44}, {"year": "2007", "value": 61.55}, {"year": "2008", "value": 64.28}, {"year": "2013", "value": 76.66}, {"year": "2014", "value": 80.49}, {"year": "2017", "value": 77.23}], "completion_m": [{"year": "2002", "value": 61.59}, {"year": "2003", "value": 60.63}, {"year": "2004", "value": 63.33}, {"year": "2007", "value": 66.53}, {"year": "2008", "value": 82.07}, {"year": "2013", "value": 72.8}, {"year": "2014", "value": 74.97}, {"year": "2017", "value": 76.22}], "oos_f": [{"year": "2000", "value": 37.86}, {"year": "2007", "value": 23.75}, {"year": "2013", "value": 14.44}, {"year": "2014", "value": 14.66}, {"year": "2017", "value": 15.3}, {"year": "2018", "value": 18.17}]}, "Lesotho": {"prim_f": [{"year": "2000", "value": 111.06}, {"year": "2001", "value": 113.05}, {"year": "2002", "value": 116.33}, {"year": "2003", "value": 122.5}, {"year": "2004", "value": 124.37}, {"year": "2005", "value": 126.27}, {"year": "2006", "value": 129.65}, {"year": "2007", "value": 123.78}, {"year": "2008", "value": 123.43}, {"year": "2009", "value": 122.69}, {"year": "2010", "value": 122.06}, {"year": "2011", "value": 119.99}, {"year": "2012", "value": 118.53}, {"year": "2013", "value": 114.9}, {"year": "2014", "value": 114.04}, {"year": "2015", "value": 113.66}, {"year": "2016", "value": 114.7}, {"year": "2017", "value": 117.76}], "prim_m": [{"year": "2000", "value": 107.47}, {"year": "2001", "value": 111.77}, {"year": "2002", "value": 115.82}, {"year": "2003", "value": 122.17}, {"year": "2004", "value": 125.55}, {"year": "2005", "value": 127.84}, {"year": "2006", "value": 131.58}, {"year": "2007", "value": 126.67}, {"year": "2008", "value": 126.71}, {"year": "2009", "value": 125.34}, {"year": "2010", "value": 127.45}, {"year": "2011", "value": 126.22}, {"year": "2012", "value": 124.06}, {"year": "2013", "value": 119.51}, {"year": "2014", "value": 119.15}, {"year": "2015", "value": 119.63}, {"year": "2016", "value": 120.72}, {"year": "2017", "value": 124.05}], "sec_f": [{"year": "2000", "value": 31.78}, {"year": "2001", "value": 33.67}, {"year": "2002", "value": 35.55}, {"year": "2003", "value": 37.02}, {"year": "2004", "value": 40.08}, {"year": "2005", "value": 43.02}, {"year": "2006", "value": 44.83}, {"year": "2007", "value": 49.21}, {"year": "2008", "value": 53.26}, {"year": "2009", "value": 59.07}, {"year": "2010", "value": 65.41}, {"year": "2011", "value": 69.3}, {"year": "2012", "value": 71.95}, {"year": "2013", "value": 69.28}, {"year": "2014", "value": 69.36}, {"year": "2015", "value": 69.66}, {"year": "2016", "value": 67.23}, {"year": "2017", "value": 71.26}], "prim_gpi": [{"year": "2000", "value": 1.03}, {"year": "2001", "value": 1.01}, {"year": "2002", "value": 1.0}, {"year": "2003", "value": 1.0}, {"year": "2004", "value": 0.99}, {"year": "2005", "value": 0.99}, {"year": "2006", "value": 0.99}, {"year": "2007", "value": 0.98}, {"year": "2008", "value": 0.97}, {"year": "2009", "value": 0.98}, {"year": "2010", "value": 0.96}, {"year": "2011", "value": 0.95}, {"year": "2012", "value": 0.96}, {"year": "2013", "value": 0.96}, {"year": "2014", "value": 0.96}, {"year": "2015", "value": 0.95}, {"year": "2016", "value": 0.95}, {"year": "2017", "value": 0.95}], "sec_gpi": [{"year": "2000", "value": 1.29}, {"year": "2001", "value": 1.25}, {"year": "2002", "value": 1.26}, {"year": "2003", "value": 1.27}, {"year": "2004", "value": 1.26}, {"year": "2005", "value": 1.26}, {"year": "2006", "value": 1.27}, {"year": "2007", "value": 1.32}, {"year": "2008", "value": 1.34}, {"year": "2009", "value": 1.38}, {"year": "2010", "value": 1.39}, {"year": "2011", "value": 1.38}, {"year": "2012", "value": 1.37}, {"year": "2013", "value": 1.34}, {"year": "2014", "value": 1.36}, {"year": "2015", "value": 1.35}, {"year": "2016", "value": 1.35}, {"year": "2017", "value": 1.35}], "completion_f": [{"year": "2000", "value": 65.66}, {"year": "2001", "value": 68.18}, {"year": "2002", "value": 71.5}, {"year": "2003", "value": 74.8}, {"year": "2004", "value": 79.75}, {"year": "2005", "value": 77.06}, {"year": "2006", "value": 100.14}, {"year": "2007", "value": 94.59}, {"year": "2008", "value": 92.4}, {"year": "2009", "value": 94.9}, {"year": "2010", "value": 97.64}, {"year": "2011", "value": 94.88}, {"year": "2012", "value": 92.83}, {"year": "2013", "value": 93.14}, {"year": "2014", "value": 91.38}, {"year": "2015", "value": 90.73}, {"year": "2016", "value": 93.53}], "completion_m": [{"year": "2000", "value": 47.87}, {"year": "2001", "value": 51.15}, {"year": "2002", "value": 52.82}, {"year": "2003", "value": 56.35}, {"year": "2004", "value": 58.86}, {"year": "2005", "value": 54.55}, {"year": "2006", "value": 71.04}, {"year": "2007", "value": 70.59}, {"year": "2008", "value": 70.63}, {"year": "2009", "value": 71.47}, {"year": "2010", "value": 76.27}, {"year": "2011", "value": 76.23}, {"year": "2012", "value": 73.71}, {"year": "2013", "value": 72.82}, {"year": "2014", "value": 73.08}, {"year": "2015", "value": 72.75}, {"year": "2016", "value": 77.69}], "oos_f": [{"year": "2000", "value": 22.5}, {"year": "2001", "value": 20.72}, {"year": "2002", "value": 18.36}, {"year": "2003", "value": 15.65}, {"year": "2004", "value": 15.66}, {"year": "2005", "value": 13.84}, {"year": "2006", "value": 11.67}, {"year": "2007", "value": 13.78}, {"year": "2008", "value": 11.93}, {"year": "2009", "value": 11.09}, {"year": "2010", "value": 9.66}, {"year": "2011", "value": 9.8}, {"year": "2012", "value": 9.41}, {"year": "2013", "value": 8.17}, {"year": "2014", "value": 8.11}, {"year": "2015", "value": 6.96}, {"year": "2016", "value": 4.61}, {"year": "2017", "value": 2.04}]}, "Madagascar": {"prim_f": [{"year": "2000", "value": 99.45}, {"year": "2001", "value": 100.52}, {"year": "2002", "value": 101.25}, {"year": "2003", "value": 115.71}, {"year": "2004", "value": 131.61}, {"year": "2005", "value": 135.83}, {"year": "2006", "value": 135.68}, {"year": "2007", "value": 136.96}, {"year": "2008", "value": 139.92}, {"year": "2009", "value": 147.61}, {"year": "2010", "value": 142.4}, {"year": "2011", "value": 142.05}, {"year": "2012", "value": 143.05}, {"year": "2013", "value": 143.35}, {"year": "2014", "value": 145.05}, {"year": "2015", "value": 147.29}, {"year": "2016", "value": 143.95}, {"year": "2018", "value": 143.06}, {"year": "2019", "value": 135.22}], "prim_m": [{"year": "2000", "value": 103.52}, {"year": "2001", "value": 104.55}, {"year": "2002", "value": 105.35}, {"year": "2003", "value": 120.8}, {"year": "2004", "value": 137.38}, {"year": "2005", "value": 141.97}, {"year": "2006", "value": 141.13}, {"year": "2007", "value": 141.52}, {"year": "2008", "value": 144.09}, {"year": "2009", "value": 151.0}, {"year": "2010", "value": 145.03}, {"year": "2011", "value": 144.76}, {"year": "2012", "value": 144.9}, {"year": "2013", "value": 144.43}, {"year": "2014", "value": 145.45}, {"year": "2015", "value": 147.33}, {"year": "2016", "value": 143.7}, {"year": "2018", "value": 142.02}, {"year": "2019", "value": 132.93}], "sec_f": [{"year": "2005", "value": 21.0}, {"year": "2006", "value": 23.62}, {"year": "2007", "value": 26.16}, {"year": "2008", "value": 28.49}, {"year": "2009", "value": 29.69}, {"year": "2011", "value": 35.8}, {"year": "2012", "value": 37.21}, {"year": "2014", "value": 37.98}, {"year": "2015", "value": 38.3}, {"year": "2016", "value": 38.21}, {"year": "2017", "value": 37.12}, {"year": "2018", "value": 37.06}, {"year": "2019", "value": 35.24}], "prim_gpi": [{"year": "2000", "value": 0.96}, {"year": "2001", "value": 0.96}, {"year": "2002", "value": 0.96}, {"year": "2003", "value": 0.96}, {"year": "2004", "value": 0.96}, {"year": "2005", "value": 0.96}, {"year": "2006", "value": 0.96}, {"year": "2007", "value": 0.97}, {"year": "2008", "value": 0.97}, {"year": "2009", "value": 0.98}, {"year": "2010", "value": 0.98}, {"year": "2011", "value": 0.98}, {"year": "2012", "value": 0.99}, {"year": "2013", "value": 0.99}, {"year": "2014", "value": 1.0}, {"year": "2015", "value": 1.0}, {"year": "2016", "value": 1.0}, {"year": "2018", "value": 1.01}, {"year": "2019", "value": 1.02}], "sec_gpi": [{"year": "2005", "value": 0.96}, {"year": "2006", "value": 0.95}, {"year": "2007", "value": 0.95}, {"year": "2008", "value": 0.94}, {"year": "2009", "value": 0.94}, {"year": "2011", "value": 0.95}, {"year": "2012", "value": 0.95}, {"year": "2014", "value": 0.98}, {"year": "2015", "value": 0.99}, {"year": "2016", "value": 0.99}, {"year": "2017", "value": 1.01}, {"year": "2018", "value": 1.03}, {"year": "2019", "value": 1.04}], "completion_f": [{"year": "2000", "value": 36.86}, {"year": "2001", "value": 36.7}, {"year": "2002", "value": 36.63}, {"year": "2003", "value": 40.46}, {"year": "2004", "value": 46.59}, {"year": "2005", "value": 58.14}, {"year": "2006", "value": 56.87}, {"year": "2007", "value": 60.9}, {"year": "2008", "value": 67.33}, {"year": "2009", "value": 74.16}, {"year": "2010", "value": 71.04}, {"year": "2011", "value": 71.63}, {"year": "2012", "value": 70.46}, {"year": "2013", "value": 69.68}, {"year": "2014", "value": 70.18}, {"year": "2015", "value": 70.74}, {"year": "2016", "value": 69.76}, {"year": "2018", "value": 68.08}, {"year": "2019", "value": 65.78}], "completion_m": [{"year": "2000", "value": 36.55}, {"year": "2001", "value": 35.7}, {"year": "2002", "value": 35.88}, {"year": "2003", "value": 39.72}, {"year": "2004", "value": 45.36}, {"year": "2005", "value": 58.44}, {"year": "2006", "value": 57.29}, {"year": "2007", "value": 61.55}, {"year": "2008", "value": 67.53}, {"year": "2009", "value": 73.73}, {"year": "2010", "value": 69.71}, {"year": "2011", "value": 69.76}, {"year": "2012", "value": 67.8}, {"year": "2013", "value": 66.25}, {"year": "2014", "value": 66.23}, {"year": "2015", "value": 66.59}, {"year": "2016", "value": 65.42}, {"year": "2018", "value": 62.89}, {"year": "2019", "value": 60.81}], "oos_f": [{"year": "2000", "value": 32.91}, {"year": "2001", "value": 31.67}, {"year": "2002", "value": 31.21}, {"year": "2003", "value": 21.79}]}, "Mozambique": {"prim_f": [{"year": "2000", "value": 65.35}, {"year": "2001", "value": 71.3}, {"year": "2002", "value": 74.68}, {"year": "2004", "value": 84.65}, {"year": "2005", "value": 91.32}, {"year": "2006", "value": 94.22}, {"year": "2007", "value": 100.01}, {"year": "2008", "value": 104.25}, {"year": "2009", "value": 105.09}, {"year": "2010", "value": 105.94}, {"year": "2011", "value": 102.28}, {"year": "2012", "value": 101.23}, {"year": "2013", "value": 102.39}, {"year": "2014", "value": 102.5}, {"year": "2015", "value": 103.43}, {"year": "2016", "value": 104.14}, {"year": "2017", "value": 103.63}, {"year": "2018", "value": 108.41}, {"year": "2019", "value": 112.37}], "prim_m": [{"year": "2000", "value": 87.02}, {"year": "2001", "value": 93.12}, {"year": "2002", "value": 95.36}, {"year": "2004", "value": 103.1}, {"year": "2005", "value": 109.52}, {"year": "2006", "value": 110.72}, {"year": "2007", "value": 116.44}, {"year": "2008", "value": 119.93}, {"year": "2009", "value": 118.78}, {"year": "2010", "value": 119.18}, {"year": "2011", "value": 114.2}, {"year": "2012", "value": 112.62}, {"year": "2013", "value": 113.35}, {"year": "2014", "value": 112.72}, {"year": "2015", "value": 113.84}, {"year": "2016", "value": 113.16}, {"year": "2017", "value": 112.0}, {"year": "2018", "value": 116.79}, {"year": "2019", "value": 120.38}], "sec_f": [{"year": "2000", "value": 4.7}, {"year": "2001", "value": 5.36}, {"year": "2002", "value": 6.79}, {"year": "2004", "value": 9.01}, {"year": "2005", "value": 10.93}, {"year": "2006", "value": 13.06}, {"year": "2007", "value": 15.42}, {"year": "2008", "value": 17.48}, {"year": "2009", "value": 20.32}, {"year": "2010", "value": 22.51}, {"year": "2011", "value": 23.94}, {"year": "2012", "value": 23.85}, {"year": "2013", "value": 32.11}, {"year": "2014", "value": 31.54}, {"year": "2015", "value": 31.95}, {"year": "2017", "value": 33.45}], "prim_gpi": [{"year": "2000", "value": 0.75}, {"year": "2001", "value": 0.77}, {"year": "2002", "value": 0.78}, {"year": "2004", "value": 0.82}, {"year": "2005", "value": 0.83}, {"year": "2006", "value": 0.85}, {"year": "2007", "value": 0.86}, {"year": "2008", "value": 0.87}, {"year": "2009", "value": 0.88}, {"year": "2010", "value": 0.89}, {"year": "2011", "value": 0.9}, {"year": "2012", "value": 0.9}, {"year": "2013", "value": 0.9}, {"year": "2014", "value": 0.91}, {"year": "2015", "value": 0.91}, {"year": "2016", "value": 0.92}, {"year": "2017", "value": 0.93}, {"year": "2018", "value": 0.93}, {"year": "2019", "value": 0.93}], "sec_gpi": [{"year": "2000", "value": 0.61}, {"year": "2001", "value": 0.62}, {"year": "2002", "value": 0.65}, {"year": "2004", "value": 0.69}, {"year": "2005", "value": 0.68}, {"year": "2006", "value": 0.71}, {"year": "2007", "value": 0.72}, {"year": "2008", "value": 0.74}, {"year": "2009", "value": 0.77}, {"year": "2010", "value": 0.8}, {"year": "2011", "value": 0.85}, {"year": "2012", "value": 0.88}, {"year": "2013", "value": 0.89}, {"year": "2014", "value": 0.89}, {"year": "2015", "value": 0.91}, {"year": "2017", "value": 0.89}], "completion_f": [{"year": "2000", "value": 12.87}, {"year": "2001", "value": 14.76}, {"year": "2002", "value": 17.61}, {"year": "2004", "value": 23.91}, {"year": "2005", "value": 34.19}, {"year": "2006", "value": 33.93}, {"year": "2007", "value": 38.5}, {"year": "2008", "value": 50.63}, {"year": "2009", "value": 48.97}, {"year": "2010", "value": 53.58}, {"year": "2011", "value": 49.94}, {"year": "2012", "value": 47.74}, {"year": "2013", "value": 45.7}, {"year": "2014", "value": 45.47}, {"year": "2015", "value": 45.75}, {"year": "2017", "value": 44.06}, {"year": "2018", "value": 48.81}, {"year": "2019", "value": 51.29}], "completion_m": [{"year": "2000", "value": 20.29}, {"year": "2001", "value": 24.0}, {"year": "2002", "value": 27.96}, {"year": "2004", "value": 35.86}, {"year": "2005", "value": 49.57}, {"year": "2006", "value": 48.7}, {"year": "2007", "value": 52.48}, {"year": "2008", "value": 65.74}, {"year": "2009", "value": 61.65}, {"year": "2010", "value": 64.48}, {"year": "2011", "value": 59.88}, {"year": "2012", "value": 56.4}, {"year": "2013", "value": 53.43}, {"year": "2014", "value": 52.19}, {"year": "2015", "value": 52.19}, {"year": "2017", "value": 50.25}, {"year": "2018", "value": 55.18}, {"year": "2019", "value": 58.18}], "oos_f": [{"year": "2000", "value": 49.0}, {"year": "2001", "value": 44.32}, {"year": "2002", "value": 47.07}, {"year": "2004", "value": 33.96}, {"year": "2005", "value": 28.67}, {"year": "2006", "value": 24.55}, {"year": "2007", "value": 19.46}, {"year": "2008", "value": 15.96}, {"year": "2009", "value": 14.41}, {"year": "2010", "value": 13.15}, {"year": "2011", "value": 15.05}, {"year": "2012", "value": 14.75}, {"year": "2013", "value": 13.58}, {"year": "2014", "value": 12.66}, {"year": "2015", "value": 11.23}, {"year": "2016", "value": 11.27}, {"year": "2017", "value": 11.77}, {"year": "2018", "value": 7.52}, {"year": "2019", "value": 3.72}]}, "Mauritius": {"prim_f": [{"year": "2000", "value": 104.1}, {"year": "2001", "value": 102.09}, {"year": "2002", "value": 101.48}, {"year": "2003", "value": 101.41}, {"year": "2004", "value": 101.94}, {"year": "2005", "value": 103.11}, {"year": "2006", "value": 103.78}, {"year": "2007", "value": 103.53}, {"year": "2008", "value": 103.49}, {"year": "2009", "value": 102.93}, {"year": "2010", "value": 103.05}, {"year": "2011", "value": 103.42}, {"year": "2012", "value": 103.39}, {"year": "2013", "value": 102.83}, {"year": "2014", "value": 103.51}, {"year": "2015", "value": 103.84}, {"year": "2016", "value": 103.38}, {"year": "2017", "value": 102.44}, {"year": "2018", "value": 102.49}, {"year": "2019", "value": 100.81}], "prim_m": [{"year": "2000", "value": 105.01}, {"year": "2001", "value": 102.64}, {"year": "2002", "value": 101.53}, {"year": "2003", "value": 101.42}, {"year": "2004", "value": 102.15}, {"year": "2005", "value": 103.34}, {"year": "2006", "value": 104.08}, {"year": "2007", "value": 103.65}, {"year": "2008", "value": 104.08}, {"year": "2009", "value": 102.66}, {"year": "2010", "value": 102.53}, {"year": "2011", "value": 102.58}, {"year": "2012", "value": 102.63}, {"year": "2013", "value": 101.11}, {"year": "2014", "value": 101.43}, {"year": "2015", "value": 102.04}, {"year": "2016", "value": 101.56}, {"year": "2017", "value": 100.65}, {"year": "2018", "value": 99.78}, {"year": "2019", "value": 98.28}], "sec_f": [{"year": "2000", "value": 75.53}, {"year": "2001", "value": 77.63}, {"year": "2002", "value": 80.95}, {"year": "2003", "value": 84.17}, {"year": "2004", "value": 85.1}, {"year": "2005", "value": 87.62}, {"year": "2006", "value": 88.89}, {"year": "2007", "value": 89.72}, {"year": "2008", "value": 89.59}, {"year": "2009", "value": 90.69}, {"year": "2010", "value": 91.29}, {"year": "2011", "value": 93.03}, {"year": "2012", "value": 95.2}, {"year": "2013", "value": 97.41}, {"year": "2014", "value": 100.83}, {"year": "2015", "value": 99.48}, {"year": "2016", "value": 99.81}, {"year": "2017", "value": 99.08}, {"year": "2018", "value": 97.77}, {"year": "2019", "value": 98.29}], "prim_gpi": [{"year": "2000", "value": 0.99}, {"year": "2001", "value": 0.99}, {"year": "2002", "value": 1.0}, {"year": "2003", "value": 1.0}, {"year": "2004", "value": 1.0}, {"year": "2005", "value": 1.0}, {"year": "2006", "value": 1.0}, {"year": "2007", "value": 1.0}, {"year": "2008", "value": 0.99}, {"year": "2009", "value": 1.0}, {"year": "2010", "value": 1.01}, {"year": "2011", "value": 1.01}, {"year": "2012", "value": 1.01}, {"year": "2013", "value": 1.02}, {"year": "2014", "value": 1.02}, {"year": "2015", "value": 1.02}, {"year": "2016", "value": 1.02}, {"year": "2017", "value": 1.02}, {"year": "2018", "value": 1.03}, {"year": "2019", "value": 1.03}], "sec_gpi": [{"year": "2000", "value": 0.97}, {"year": "2001", "value": 0.97}, {"year": "2002", "value": 1.0}, {"year": "2003", "value": 0.99}, {"year": "2004", "value": 0.98}, {"year": "2005", "value": 0.98}, {"year": "2006", "value": 1.03}, {"year": "2007", "value": 1.03}, {"year": "2008", "value": 1.04}, {"year": "2009", "value": 1.04}, {"year": "2010", "value": 1.05}, {"year": "2011", "value": 1.05}, {"year": "2012", "value": 1.05}, {"year": "2013", "value": 1.03}, {"year": "2014", "value": 1.02}, {"year": "2015", "value": 1.04}, {"year": "2016", "value": 1.05}, {"year": "2017", "value": 1.07}, {"year": "2018", "value": 1.06}, {"year": "2019", "value": 1.02}], "completion_f": [{"year": "2000", "value": 102.01}, {"year": "2001", "value": 102.51}, {"year": "2002", "value": 98.37}, {"year": "2003", "value": 99.3}, {"year": "2004", "value": 97.57}, {"year": "2005", "value": 97.97}, {"year": "2006", "value": 96.41}, {"year": "2007", "value": 98.88}, {"year": "2008", "value": 97.25}, {"year": "2009", "value": 95.16}, {"year": "2010", "value": 99.51}, {"year": "2011", "value": 99.04}, {"year": "2012", "value": 97.29}, {"year": "2013", "value": 99.7}, {"year": "2014", "value": 98.06}, {"year": "2015", "value": 102.5}, {"year": "2016", "value": 102.4}, {"year": "2017", "value": 97.94}, {"year": "2018", "value": 101.91}, {"year": "2019", "value": 100.95}], "completion_m": [{"year": "2000", "value": 103.56}, {"year": "2001", "value": 101.28}, {"year": "2002", "value": 98.3}, {"year": "2003", "value": 99.04}, {"year": "2004", "value": 94.54}, {"year": "2005", "value": 97.02}, {"year": "2006", "value": 93.64}, {"year": "2007", "value": 96.0}, {"year": "2008", "value": 96.88}, {"year": "2009", "value": 94.44}, {"year": "2010", "value": 99.04}, {"year": "2011", "value": 97.84}, {"year": "2012", "value": 94.02}, {"year": "2013", "value": 95.07}, {"year": "2014", "value": 95.82}, {"year": "2015", "value": 98.54}, {"year": "2016", "value": 99.79}, {"year": "2017", "value": 98.45}, {"year": "2018", "value": 99.72}, {"year": "2019", "value": 96.17}], "oos_f": [{"year": "2004", "value": 1.13}, {"year": "2005", "value": 0.14}, {"year": "2009", "value": 0.2}, {"year": "2012", "value": 3.31}, {"year": "2013", "value": 0.94}]}, "Malawi": {"prim_f": [{"year": "2000", "value": 135.85}, {"year": "2001", "value": 140.23}, {"year": "2002", "value": 136.83}, {"year": "2004", "value": 133.35}, {"year": "2005", "value": 131.02}, {"year": "2006", "value": 131.03}, {"year": "2007", "value": 127.77}, {"year": "2008", "value": 134.39}, {"year": "2009", "value": 132.82}, {"year": "2010", "value": 140.19}, {"year": "2011", "value": 142.3}, {"year": "2012", "value": 142.95}, {"year": "2013", "value": 148.25}, {"year": "2014", "value": 148.77}, {"year": "2015", "value": 147.88}, {"year": "2016", "value": 146.44}, {"year": "2017", "value": 147.76}, {"year": "2018", "value": 143.1}, {"year": "2019", "value": 146.96}], "prim_m": [{"year": "2000", "value": 143.47}, {"year": "2001", "value": 147.72}, {"year": "2002", "value": 143.92}, {"year": "2004", "value": 132.27}, {"year": "2005", "value": 129.94}, {"year": "2006", "value": 128.51}, {"year": "2007", "value": 125.34}, {"year": "2008", "value": 132.86}, {"year": "2009", "value": 131.1}, {"year": "2010", "value": 137.32}, {"year": "2011", "value": 138.95}, {"year": "2012", "value": 139.92}, {"year": "2013", "value": 145.59}, {"year": "2014", "value": 146.03}, {"year": "2015", "value": 144.92}, {"year": "2016", "value": 142.64}, {"year": "2017", "value": 143.24}, {"year": "2018", "value": 141.82}, {"year": "2019", "value": 142.69}], "sec_f": [{"year": "2000", "value": 26.54}, {"year": "2001", "value": 27.59}, {"year": "2002", "value": 26.54}, {"year": "2004", "value": 24.84}, {"year": "2005", "value": 24.81}, {"year": "2006", "value": 27.03}, {"year": "2007", "value": 26.66}, {"year": "2008", "value": 29.07}, {"year": "2009", "value": 30.14}, {"year": "2010", "value": 31.91}, {"year": "2011", "value": 33.08}, {"year": "2012", "value": 33.03}, {"year": "2013", "value": 36.19}, {"year": "2014", "value": 38.08}, {"year": "2015", "value": 38.9}, {"year": "2016", "value": 36.86}, {"year": "2017", "value": 38.62}, {"year": "2018", "value": 39.92}, {"year": "2019", "value": 33.65}], "prim_gpi": [{"year": "2000", "value": 0.95}, {"year": "2001", "value": 0.95}, {"year": "2002", "value": 0.95}, {"year": "2004", "value": 1.01}, {"year": "2005", "value": 1.01}, {"year": "2006", "value": 1.02}, {"year": "2007", "value": 1.02}, {"year": "2008", "value": 1.01}, {"year": "2009", "value": 1.01}, {"year": "2010", "value": 1.02}, {"year": "2011", "value": 1.02}, {"year": "2012", "value": 1.02}, {"year": "2013", "value": 1.02}, {"year": "2014", "value": 1.02}, {"year": "2015", "value": 1.02}, {"year": "2016", "value": 1.03}, {"year": "2017", "value": 1.03}, {"year": "2018", "value": 1.01}, {"year": "2019", "value": 1.03}], "sec_gpi": [{"year": "2000", "value": 0.73}, {"year": "2001", "value": 0.76}, {"year": "2002", "value": 0.76}, {"year": "2004", "value": 0.79}, {"year": "2005", "value": 0.79}, {"year": "2006", "value": 0.82}, {"year": "2007", "value": 0.81}, {"year": "2008", "value": 0.82}, {"year": "2009", "value": 0.85}, {"year": "2010", "value": 0.88}, {"year": "2011", "value": 0.89}, {"year": "2012", "value": 0.88}, {"year": "2013", "value": 0.89}, {"year": "2014", "value": 0.9}, {"year": "2015", "value": 0.91}, {"year": "2016", "value": 0.89}, {"year": "2017", "value": 0.94}, {"year": "2018", "value": 0.98}, {"year": "2019", "value": 0.83}], "completion_f": [{"year": "2000", "value": 59.21}, {"year": "2001", "value": 62.71}, {"year": "2002", "value": 64.98}, {"year": "2004", "value": 58.63}, {"year": "2005", "value": 58.94}, {"year": "2006", "value": 59.24}, {"year": "2007", "value": 60.55}, {"year": "2008", "value": 64.99}, {"year": "2009", "value": 67.57}, {"year": "2010", "value": 69.94}, {"year": "2011", "value": 72.25}, {"year": "2012", "value": 74.61}, {"year": "2013", "value": 80.1}, {"year": "2014", "value": 80.61}, {"year": "2019", "value": 85.03}], "completion_m": [{"year": "2000", "value": 67.84}, {"year": "2001", "value": 67.48}, {"year": "2002", "value": 72.33}, {"year": "2004", "value": 62.56}, {"year": "2005", "value": 61.83}, {"year": "2006", "value": 60.49}, {"year": "2007", "value": 60.73}, {"year": "2008", "value": 65.63}, {"year": "2009", "value": 65.97}, {"year": "2010", "value": 68.47}, {"year": "2011", "value": 70.97}, {"year": "2012", "value": 74.99}, {"year": "2013", "value": 79.99}, {"year": "2014", "value": 79.39}, {"year": "2019", "value": 75.71}], "oos_f": [{"year": "2007", "value": 2.29}]}, "Namibia": {"prim_f": [{"year": "2000", "value": 113.82}, {"year": "2001", "value": 114.42}, {"year": "2002", "value": 115.3}, {"year": "2003", "value": 114.94}, {"year": "2004", "value": 112.62}, {"year": "2005", "value": 112.05}, {"year": "2006", "value": 111.13}, {"year": "2007", "value": 112.59}, {"year": "2008", "value": 112.17}, {"year": "2009", "value": 112.42}, {"year": "2010", "value": 112.93}, {"year": "2012", "value": 116.38}, {"year": "2013", "value": 118.43}, {"year": "2017", "value": 121.84}, {"year": "2018", "value": 122.14}], "prim_m": [{"year": "2000", "value": 115.11}, {"year": "2001", "value": 116.09}, {"year": "2002", "value": 116.7}, {"year": "2003", "value": 117.12}, {"year": "2004", "value": 114.6}, {"year": "2005", "value": 114.58}, {"year": "2006", "value": 113.66}, {"year": "2007", "value": 115.99}, {"year": "2008", "value": 115.91}, {"year": "2009", "value": 116.59}, {"year": "2010", "value": 117.48}, {"year": "2012", "value": 121.4}, {"year": "2013", "value": 123.7}, {"year": "2017", "value": 126.53}, {"year": "2018", "value": 126.37}], "sec_f": [{"year": "2000", "value": 62.09}, {"year": "2001", "value": 66.87}, {"year": "2002", "value": 65.9}, {"year": "2003", "value": 65.93}, {"year": "2004", "value": 66.15}, {"year": "2005", "value": 66.67}, {"year": "2006", "value": 67.91}, {"year": "2007", "value": 69.97}], "prim_gpi": [{"year": "2000", "value": 0.99}, {"year": "2001", "value": 0.99}, {"year": "2002", "value": 0.99}, {"year": "2003", "value": 0.98}, {"year": "2004", "value": 0.98}, {"year": "2005", "value": 0.98}, {"year": "2006", "value": 0.98}, {"year": "2007", "value": 0.97}, {"year": "2008", "value": 0.97}, {"year": "2009", "value": 0.96}, {"year": "2010", "value": 0.96}, {"year": "2012", "value": 0.96}, {"year": "2013", "value": 0.96}, {"year": "2017", "value": 0.96}, {"year": "2018", "value": 0.97}], "sec_gpi": [{"year": "2000", "value": 1.1}, {"year": "2001", "value": 1.11}, {"year": "2002", "value": 1.09}, {"year": "2003", "value": 1.1}, {"year": "2004", "value": 1.1}, {"year": "2005", "value": 1.11}, {"year": "2006", "value": 1.13}, {"year": "2007", "value": 1.14}], "completion_f": [{"year": "2000", "value": 94.3}, {"year": "2001", "value": 95.53}, {"year": "2002", "value": 96.73}, {"year": "2003", "value": 97.04}, {"year": "2004", "value": 90.47}, {"year": "2005", "value": 90.49}, {"year": "2006", "value": 88.18}, {"year": "2008", "value": 85.59}, {"year": "2009", "value": 90.64}, {"year": "2010", "value": 87.18}, {"year": "2012", "value": 92.53}, {"year": "2013", "value": 95.23}, {"year": "2018", "value": 96.92}], "completion_m": [{"year": "2000", "value": 84.51}, {"year": "2001", "value": 89.92}, {"year": "2002", "value": 87.68}, {"year": "2003", "value": 89.91}, {"year": "2004", "value": 82.89}, {"year": "2005", "value": 84.85}, {"year": "2006", "value": 81.97}, {"year": "2008", "value": 77.73}, {"year": "2009", "value": 84.61}, {"year": "2010", "value": 81.8}, {"year": "2012", "value": 88.32}, {"year": "2013", "value": 90.79}, {"year": "2018", "value": 91.24}], "oos_f": [{"year": "2000", "value": 8.56}, {"year": "2001", "value": 6.73}, {"year": "2002", "value": 4.41}, {"year": "2003", "value": 4.18}, {"year": "2004", "value": 6.41}, {"year": "2005", "value": 6.24}, {"year": "2006", "value": 9.44}, {"year": "2007", "value": 6.41}, {"year": "2008", "value": 7.1}, {"year": "2009", "value": 6.49}, {"year": "2010", "value": 5.75}, {"year": "2012", "value": 2.43}]}, "Eswatini": {"prim_f": [{"year": "2000", "value": 103.37}, {"year": "2001", "value": 102.43}, {"year": "2002", "value": 99.53}, {"year": "2003", "value": 100.32}, {"year": "2004", "value": 104.98}, {"year": "2005", "value": 107.54}, {"year": "2006", "value": 112.54}, {"year": "2007", "value": 114.78}, {"year": "2009", "value": 114.04}, {"year": "2010", "value": 118.84}, {"year": "2011", "value": 116.93}, {"year": "2012", "value": 117.38}, {"year": "2013", "value": 115.72}, {"year": "2014", "value": 114.85}, {"year": "2015", "value": 113.53}, {"year": "2016", "value": 111.79}, {"year": "2017", "value": 110.35}, {"year": "2018", "value": 110.05}], "prim_m": [{"year": "2000", "value": 109.38}, {"year": "2001", "value": 107.54}, {"year": "2002", "value": 107.09}, {"year": "2003", "value": 106.22}, {"year": "2004", "value": 112.78}, {"year": "2005", "value": 116.0}, {"year": "2006", "value": 122.76}, {"year": "2007", "value": 125.79}, {"year": "2009", "value": 126.01}, {"year": "2010", "value": 130.96}, {"year": "2011", "value": 132.07}, {"year": "2012", "value": 129.94}, {"year": "2013", "value": 128.17}, {"year": "2014", "value": 126.6}, {"year": "2015", "value": 124.88}, {"year": "2016", "value": 121.76}, {"year": "2017", "value": 119.92}, {"year": "2018", "value": 119.28}], "sec_f": [{"year": "2000", "value": 44.14}, {"year": "2001", "value": 45.32}, {"year": "2002", "value": 46.91}, {"year": "2003", "value": 46.42}, {"year": "2004", "value": 49.17}, {"year": "2005", "value": 51.83}, {"year": "2006", "value": 55.92}, {"year": "2007", "value": 56.24}, {"year": "2009", "value": 59.76}, {"year": "2010", "value": 63.71}, {"year": "2011", "value": 65.72}, {"year": "2012", "value": 67.61}, {"year": "2013", "value": 70.06}, {"year": "2014", "value": 73.54}, {"year": "2015", "value": 76.03}, {"year": "2016", "value": 82.19}], "prim_gpi": [{"year": "2000", "value": 0.94}, {"year": "2001", "value": 0.95}, {"year": "2002", "value": 0.93}, {"year": "2003", "value": 0.94}, {"year": "2004", "value": 0.93}, {"year": "2005", "value": 0.93}, {"year": "2006", "value": 0.92}, {"year": "2007", "value": 0.91}, {"year": "2009", "value": 0.9}, {"year": "2010", "value": 0.91}, {"year": "2011", "value": 0.89}, {"year": "2012", "value": 0.9}, {"year": "2013", "value": 0.9}, {"year": "2014", "value": 0.91}, {"year": "2015", "value": 0.91}, {"year": "2016", "value": 0.92}, {"year": "2017", "value": 0.92}, {"year": "2018", "value": 0.92}], "sec_gpi": [{"year": "2000", "value": 1.01}, {"year": "2001", "value": 1.0}, {"year": "2002", "value": 0.99}, {"year": "2003", "value": 0.97}, {"year": "2004", "value": 0.93}, {"year": "2005", "value": 0.96}, {"year": "2006", "value": 0.95}, {"year": "2007", "value": 0.84}, {"year": "2009", "value": 0.95}, {"year": "2010", "value": 0.95}, {"year": "2011", "value": 0.94}, {"year": "2012", "value": 0.94}, {"year": "2013", "value": 0.97}, {"year": "2014", "value": 0.99}, {"year": "2015", "value": 1.0}, {"year": "2016", "value": 0.99}], "completion_f": [{"year": "2000", "value": 71.5}, {"year": "2001", "value": 67.7}, {"year": "2002", "value": 71.24}, {"year": "2003", "value": 69.15}, {"year": "2004", "value": 70.09}, {"year": "2005", "value": 72.97}, {"year": "2006", "value": 73.07}, {"year": "2007", "value": 76.35}, {"year": "2009", "value": 78.05}, {"year": "2010", "value": 83.83}, {"year": "2011", "value": 84.04}, {"year": "2012", "value": 85.91}, {"year": "2013", "value": 86.24}, {"year": "2014", "value": 86.0}, {"year": "2015", "value": 89.45}, {"year": "2016", "value": 94.75}, {"year": "2017", "value": 97.14}, {"year": "2018", "value": 95.57}], "completion_m": [{"year": "2000", "value": 67.84}, {"year": "2001", "value": 66.22}, {"year": "2002", "value": 67.68}, {"year": "2003", "value": 63.63}, {"year": "2004", "value": 66.22}, {"year": "2005", "value": 68.21}, {"year": "2006", "value": 70.98}, {"year": "2007", "value": 84.72}, {"year": "2009", "value": 80.12}, {"year": "2010", "value": 82.62}, {"year": "2011", "value": 83.56}, {"year": "2012", "value": 83.48}, {"year": "2013", "value": 85.85}, {"year": "2014", "value": 83.08}, {"year": "2015", "value": 88.83}, {"year": "2016", "value": 95.55}, {"year": "2017", "value": 94.5}, {"year": "2018", "value": 93.41}], "oos_f": [{"year": "2009", "value": 18.33}, {"year": "2010", "value": 12.75}, {"year": "2011", "value": 9.91}, {"year": "2012", "value": 13.38}, {"year": "2013", "value": 16.29}, {"year": "2014", "value": 15.31}, {"year": "2015", "value": 16.28}, {"year": "2016", "value": 16.29}, {"year": "2017", "value": 17.53}, {"year": "2018", "value": 17.24}]}, "Seychelles": {"prim_f": [{"year": "2000", "value": 107.11}, {"year": "2001", "value": 105.62}, {"year": "2002", "value": 105.31}, {"year": "2003", "value": 105.47}, {"year": "2004", "value": 102.14}, {"year": "2005", "value": 108.06}, {"year": "2006", "value": 107.08}, {"year": "2007", "value": 108.88}, {"year": "2008", "value": 109.49}, {"year": "2009", "value": 109.38}, {"year": "2010", "value": 112.14}, {"year": "2011", "value": 113.34}, {"year": "2012", "value": 111.44}, {"year": "2013", "value": 108.01}, {"year": "2014", "value": 106.37}, {"year": "2015", "value": 105.97}, {"year": "2016", "value": 103.57}, {"year": "2017", "value": 102.42}, {"year": "2018", "value": 103.32}, {"year": "2019", "value": 102.81}], "prim_m": [{"year": "2000", "value": 104.14}, {"year": "2001", "value": 104.5}, {"year": "2002", "value": 105.6}, {"year": "2003", "value": 107.04}, {"year": "2004", "value": 103.0}, {"year": "2005", "value": 110.15}, {"year": "2006", "value": 107.42}, {"year": "2007", "value": 106.59}, {"year": "2008", "value": 106.03}, {"year": "2009", "value": 106.37}, {"year": "2010", "value": 108.79}, {"year": "2011", "value": 107.73}, {"year": "2012", "value": 107.19}, {"year": "2013", "value": 105.73}, {"year": "2014", "value": 104.78}, {"year": "2015", "value": 102.84}, {"year": "2016", "value": 100.31}, {"year": "2017", "value": 97.39}, {"year": "2018", "value": 97.59}, {"year": "2019", "value": 98.04}], "sec_f": [{"year": "2000", "value": 76.38}, {"year": "2001", "value": 69.37}, {"year": "2002", "value": 73.31}, {"year": "2003", "value": 77.86}, {"year": "2004", "value": 78.75}, {"year": "2005", "value": 84.77}, {"year": "2006", "value": 77.63}, {"year": "2007", "value": 83.01}, {"year": "2008", "value": 81.09}, {"year": "2009", "value": 80.33}, {"year": "2010", "value": 77.06}, {"year": "2011", "value": 74.32}, {"year": "2012", "value": 81.22}, {"year": "2013", "value": 82.31}, {"year": "2014", "value": 81.23}, {"year": "2015", "value": 84.36}, {"year": "2016", "value": 86.56}, {"year": "2017", "value": 85.91}, {"year": "2018", "value": 84.2}, {"year": "2019", "value": 81.13}], "prim_gpi": [{"year": "2000", "value": 1.03}, {"year": "2001", "value": 1.01}, {"year": "2002", "value": 1.0}, {"year": "2003", "value": 0.99}, {"year": "2004", "value": 0.99}, {"year": "2005", "value": 0.98}, {"year": "2006", "value": 1.0}, {"year": "2007", "value": 1.02}, {"year": "2008", "value": 1.03}, {"year": "2009", "value": 1.03}, {"year": "2010", "value": 1.03}, {"year": "2011", "value": 1.05}, {"year": "2012", "value": 1.04}, {"year": "2013", "value": 1.02}, {"year": "2014", "value": 1.02}, {"year": "2015", "value": 1.03}, {"year": "2016", "value": 1.03}, {"year": "2017", "value": 1.05}, {"year": "2018", "value": 1.06}, {"year": "2019", "value": 1.05}], "sec_gpi": [{"year": "2000", "value": 1.1}, {"year": "2001", "value": 1.08}, {"year": "2002", "value": 1.08}, {"year": "2003", "value": 1.08}, {"year": "2004", "value": 1.11}, {"year": "2005", "value": 1.07}, {"year": "2006", "value": 1.07}, {"year": "2007", "value": 1.1}, {"year": "2008", "value": 1.12}, {"year": "2009", "value": 1.11}, {"year": "2010", "value": 1.06}, {"year": "2011", "value": 1.05}, {"year": "2012", "value": 1.0}, {"year": "2013", "value": 1.1}, {"year": "2014", "value": 1.05}, {"year": "2015", "value": 1.07}, {"year": "2016", "value": 1.11}, {"year": "2017", "value": 1.12}, {"year": "2018", "value": 1.07}, {"year": "2019", "value": 1.06}], "completion_f": [{"year": "2000", "value": 100.77}, {"year": "2001", "value": 106.14}, {"year": "2002", "value": 107.14}, {"year": "2003", "value": 107.74}, {"year": "2004", "value": 104.19}, {"year": "2005", "value": 115.2}, {"year": "2007", "value": 112.3}, {"year": "2008", "value": 112.46}, {"year": "2009", "value": 106.45}, {"year": "2010", "value": 108.58}, {"year": "2011", "value": 112.78}, {"year": "2012", "value": 103.49}, {"year": "2013", "value": 102.38}, {"year": "2014", "value": 107.55}, {"year": "2015", "value": 110.46}, {"year": "2016", "value": 112.69}, {"year": "2017", "value": 99.57}, {"year": "2018", "value": 105.2}, {"year": "2019", "value": 103.14}], "completion_m": [{"year": "2000", "value": 97.09}, {"year": "2001", "value": 105.19}, {"year": "2002", "value": 105.42}, {"year": "2003", "value": 106.39}, {"year": "2004", "value": 103.26}, {"year": "2005", "value": 115.17}, {"year": "2007", "value": 112.34}, {"year": "2008", "value": 112.18}, {"year": "2009", "value": 106.69}, {"year": "2010", "value": 112.37}, {"year": "2011", "value": 107.82}, {"year": "2012", "value": 105.6}, {"year": "2013", "value": 106.69}, {"year": "2014", "value": 115.13}, {"year": "2015", "value": 107.11}, {"year": "2016", "value": 112.61}, {"year": "2017", "value": 104.72}, {"year": "2018", "value": 98.66}, {"year": "2019", "value": 94.66}], "oos_f": [{"year": "2001", "value": 8.5}, {"year": "2002", "value": 1.55}]}, "Tanzania": {"prim_f": [{"year": "2000", "value": 68.66}, {"year": "2001", "value": 74.27}, {"year": "2002", "value": 88.19}, {"year": "2003", "value": 94.04}, {"year": "2004", "value": 99.44}, {"year": "2005", "value": 103.8}, {"year": "2006", "value": 107.86}, {"year": "2007", "value": 110.62}, {"year": "2008", "value": 111.76}, {"year": "2009", "value": 106.75}, {"year": "2010", "value": 103.79}, {"year": "2011", "value": 98.88}, {"year": "2012", "value": 95.29}, {"year": "2013", "value": 91.95}, {"year": "2014", "value": 88.97}, {"year": "2015", "value": 86.95}, {"year": "2016", "value": 87.26}, {"year": "2017", "value": 90.76}, {"year": "2018", "value": 95.39}, {"year": "2019", "value": 99.9}], "prim_m": [{"year": "2000", "value": 69.03}, {"year": "2001", "value": 75.23}, {"year": "2002", "value": 90.52}, {"year": "2003", "value": 97.51}, {"year": "2004", "value": 102.77}, {"year": "2005", "value": 107.0}, {"year": "2006", "value": 110.2}, {"year": "2007", "value": 112.04}, {"year": "2008", "value": 113.06}, {"year": "2009", "value": 106.58}, {"year": "2010", "value": 101.91}, {"year": "2011", "value": 95.56}, {"year": "2012", "value": 93.08}, {"year": "2013", "value": 88.17}, {"year": "2014", "value": 84.65}, {"year": "2015", "value": 82.45}, {"year": "2016", "value": 83.38}, {"year": "2017", "value": 87.71}, {"year": "2018", "value": 92.97}, {"year": "2019", "value": 97.65}], "sec_f": [{"year": "2010", "value": 28.5}, {"year": "2014", "value": 30.16}, {"year": "2015", "value": 27.01}, {"year": "2016", "value": 26.8}, {"year": "2017", "value": 27.67}, {"year": "2018", "value": 30.13}, {"year": "2019", "value": 33.26}], "prim_gpi": [{"year": "2000", "value": 0.99}, {"year": "2001", "value": 0.99}, {"year": "2002", "value": 0.97}, {"year": "2003", "value": 0.96}, {"year": "2004", "value": 0.97}, {"year": "2005", "value": 0.97}, {"year": "2006", "value": 0.98}, {"year": "2007", "value": 0.99}, {"year": "2008", "value": 0.99}, {"year": "2009", "value": 1.0}, {"year": "2010", "value": 1.02}, {"year": "2011", "value": 1.03}, {"year": "2012", "value": 1.02}, {"year": "2013", "value": 1.04}, {"year": "2014", "value": 1.05}, {"year": "2015", "value": 1.05}, {"year": "2016", "value": 1.05}, {"year": "2017", "value": 1.03}, {"year": "2018", "value": 1.03}, {"year": "2019", "value": 1.02}], "sec_gpi": [{"year": "2010", "value": 0.82}, {"year": "2014", "value": 0.96}, {"year": "2015", "value": 0.99}, {"year": "2016", "value": 1.01}, {"year": "2017", "value": 1.02}, {"year": "2018", "value": 1.05}, {"year": "2019", "value": 1.08}], "completion_f": [{"year": "2000", "value": 51.32}, {"year": "2001", "value": 57.04}, {"year": "2002", "value": 60.92}, {"year": "2004", "value": 58.08}, {"year": "2005", "value": 53.95}, {"year": "2006", "value": 71.03}, {"year": "2007", "value": 81.1}, {"year": "2009", "value": 103.95}, {"year": "2010", "value": 93.4}, {"year": "2012", "value": 86.2}, {"year": "2013", "value": 80.78}, {"year": "2016", "value": 65.96}, {"year": "2018", "value": 72.82}, {"year": "2019", "value": 71.89}], "completion_m": [{"year": "2000", "value": 49.77}, {"year": "2001", "value": 54.71}, {"year": "2002", "value": 58.72}, {"year": "2004", "value": 58.26}, {"year": "2005", "value": 55.83}, {"year": "2006", "value": 72.85}, {"year": "2007", "value": 84.3}, {"year": "2009", "value": 103.29}, {"year": "2010", "value": 88.72}, {"year": "2012", "value": 78.08}, {"year": "2013", "value": 72.75}, {"year": "2016", "value": 57.26}, {"year": "2018", "value": 64.66}, {"year": "2019", "value": 64.2}], "oos_f": [{"year": "2000", "value": 45.53}, {"year": "2001", "value": 41.52}, {"year": "2002", "value": 27.15}, {"year": "2003", "value": 18.98}, {"year": "2004", "value": 14.31}, {"year": "2005", "value": 9.59}, {"year": "2006", "value": 3.47}, {"year": "2008", "value": 0.98}, {"year": "2010", "value": 6.46}, {"year": "2012", "value": 11.17}, {"year": "2013", "value": 13.34}, {"year": "2014", "value": 14.6}, {"year": "2016", "value": 13.34}, {"year": "2017", "value": 13.57}, {"year": "2018", "value": 15.86}, {"year": "2019", "value": 11.55}]}, "South Africa": {"prim_f": [{"year": "2000", "value": 99.35}, {"year": "2001", "value": 100.5}, {"year": "2002", "value": 102.56}, {"year": "2003", "value": 103.83}, {"year": "2004", "value": 104.6}, {"year": "2005", "value": 104.11}, {"year": "2006", "value": 104.34}, {"year": "2007", "value": 106.35}, {"year": "2008", "value": 105.84}, {"year": "2009", "value": 104.47}, {"year": "2010", "value": 102.67}, {"year": "2011", "value": 101.27}, {"year": "2012", "value": 101.01}, {"year": "2013", "value": 100.44}, {"year": "2014", "value": 100.66}, {"year": "2015", "value": 101.9}, {"year": "2016", "value": 101.49}, {"year": "2017", "value": 99.14}, {"year": "2018", "value": 96.59}], "prim_m": [{"year": "2000", "value": 103.6}, {"year": "2001", "value": 103.46}, {"year": "2002", "value": 105.35}, {"year": "2003", "value": 106.99}, {"year": "2004", "value": 108.26}, {"year": "2005", "value": 107.75}, {"year": "2006", "value": 108.13}, {"year": "2007", "value": 109.68}, {"year": "2008", "value": 109.19}, {"year": "2009", "value": 108.19}, {"year": "2010", "value": 106.76}, {"year": "2011", "value": 105.54}, {"year": "2012", "value": 105.41}, {"year": "2013", "value": 104.86}, {"year": "2014", "value": 104.72}, {"year": "2015", "value": 109.17}, {"year": "2016", "value": 104.84}, {"year": "2017", "value": 102.56}, {"year": "2018", "value": 100.45}], "sec_f": [{"year": "2000", "value": 85.5}, {"year": "2001", "value": 85.83}, {"year": "2002", "value": 85.9}, {"year": "2003", "value": 86.63}, {"year": "2004", "value": 89.32}, {"year": "2005", "value": 90.53}, {"year": "2006", "value": 93.68}, {"year": "2007", "value": 94.94}, {"year": "2008", "value": 93.11}, {"year": "2009", "value": 95.12}, {"year": "2010", "value": 96.56}, {"year": "2011", "value": 98.88}, {"year": "2012", "value": 101.68}, {"year": "2014", "value": 112.82}, {"year": "2015", "value": 108.75}, {"year": "2016", "value": 112.09}, {"year": "2017", "value": 109.03}, {"year": "2018", "value": 103.97}], "prim_gpi": [{"year": "2000", "value": 0.96}, {"year": "2001", "value": 0.97}, {"year": "2002", "value": 0.97}, {"year": "2003", "value": 0.97}, {"year": "2004", "value": 0.97}, {"year": "2005", "value": 0.97}, {"year": "2006", "value": 0.96}, {"year": "2007", "value": 0.97}, {"year": "2008", "value": 0.97}, {"year": "2009", "value": 0.97}, {"year": "2010", "value": 0.96}, {"year": "2011", "value": 0.96}, {"year": "2012", "value": 0.96}, {"year": "2013", "value": 0.96}, {"year": "2014", "value": 0.96}, {"year": "2015", "value": 0.93}, {"year": "2016", "value": 0.97}, {"year": "2017", "value": 0.97}, {"year": "2018", "value": 0.96}], "sec_gpi": [{"year": "2000", "value": 1.12}, {"year": "2001", "value": 1.11}, {"year": "2002", "value": 1.09}, {"year": "2003", "value": 1.08}, {"year": "2004", "value": 1.08}, {"year": "2005", "value": 1.07}, {"year": "2006", "value": 1.07}, {"year": "2007", "value": 1.06}, {"year": "2008", "value": 1.05}, {"year": "2009", "value": 1.06}, {"year": "2010", "value": 1.06}, {"year": "2011", "value": 1.06}, {"year": "2012", "value": 1.06}, {"year": "2014", "value": 1.1}, {"year": "2015", "value": 0.99}, {"year": "2016", "value": 1.1}, {"year": "2017", "value": 1.09}, {"year": "2018", "value": 1.07}], "completion_f": [{"year": "2000", "value": 82.37}, {"year": "2002", "value": 88.77}, {"year": "2003", "value": 92.53}, {"year": "2004", "value": 95.87}, {"year": "2015", "value": 89.11}, {"year": "2016", "value": 88.07}, {"year": "2018", "value": 92.12}], "completion_m": [{"year": "2000", "value": 79.73}, {"year": "2002", "value": 83.95}, {"year": "2003", "value": 88.66}, {"year": "2004", "value": 95.45}, {"year": "2015", "value": 91.1}, {"year": "2016", "value": 86.45}, {"year": "2018", "value": 88.59}], "oos_f": [{"year": "2000", "value": 8.82}, {"year": "2001", "value": 7.54}, {"year": "2002", "value": 6.28}, {"year": "2003", "value": 5.22}, {"year": "2004", "value": 4.64}, {"year": "2005", "value": 4.46}, {"year": "2017", "value": 5.33}, {"year": "2018", "value": 10.17}]}, "Zambia": {"prim_f": [{"year": "2000", "value": 75.85}, {"year": "2001", "value": 75.9}, {"year": "2002", "value": 78.66}, {"year": "2004", "value": 98.01}, {"year": "2005", "value": 108.83}, {"year": "2006", "value": 111.64}, {"year": "2007", "value": 112.06}, {"year": "2008", "value": 113.46}, {"year": "2009", "value": 107.61}, {"year": "2010", "value": 107.31}, {"year": "2011", "value": 107.48}, {"year": "2012", "value": 108.37}, {"year": "2013", "value": 102.89}, {"year": "2014", "value": 104.52}, {"year": "2015", "value": 101.61}, {"year": "2016", "value": 99.59}, {"year": "2017", "value": 99.9}], "prim_m": [{"year": "2000", "value": 82.23}, {"year": "2001", "value": 82.05}, {"year": "2002", "value": 85.43}, {"year": "2004", "value": 103.95}, {"year": "2005", "value": 115.37}, {"year": "2006", "value": 115.16}, {"year": "2007", "value": 116.78}, {"year": "2008", "value": 117.12}, {"year": "2009", "value": 109.66}, {"year": "2010", "value": 106.64}, {"year": "2011", "value": 108.65}, {"year": "2012", "value": 107.89}, {"year": "2013", "value": 102.54}, {"year": "2014", "value": 104.15}, {"year": "2015", "value": 101.31}, {"year": "2016", "value": 97.63}, {"year": "2017", "value": 97.54}], "sec_f": [], "prim_gpi": [{"year": "2000", "value": 0.92}, {"year": "2001", "value": 0.93}, {"year": "2002", "value": 0.92}, {"year": "2004", "value": 0.94}, {"year": "2005", "value": 0.94}, {"year": "2006", "value": 0.97}, {"year": "2007", "value": 0.96}, {"year": "2008", "value": 0.97}, {"year": "2009", "value": 0.98}, {"year": "2010", "value": 1.01}, {"year": "2011", "value": 0.99}, {"year": "2012", "value": 1.0}, {"year": "2013", "value": 1.0}, {"year": "2014", "value": 1.0}, {"year": "2015", "value": 1.0}, {"year": "2016", "value": 1.02}, {"year": "2017", "value": 1.02}], "sec_gpi": [], "completion_f": [{"year": "2000", "value": 53.62}, {"year": "2002", "value": 53.01}, {"year": "2004", "value": 64.34}, {"year": "2005", "value": 68.16}, {"year": "2006", "value": 76.99}, {"year": "2007", "value": 80.63}, {"year": "2008", "value": 84.82}, {"year": "2009", "value": 79.82}, {"year": "2010", "value": 102.0}, {"year": "2012", "value": 87.91}, {"year": "2013", "value": 78.58}], "completion_m": [{"year": "2000", "value": 64.47}, {"year": "2002", "value": 64.77}, {"year": "2004", "value": 75.65}, {"year": "2005", "value": 94.49}, {"year": "2006", "value": 88.76}, {"year": "2007", "value": 93.21}, {"year": "2008", "value": 97.27}, {"year": "2009", "value": 90.7}, {"year": "2010", "value": 94.03}, {"year": "2012", "value": 88.15}, {"year": "2013", "value": 81.37}], "oos_f": [{"year": "2000", "value": 34.13}, {"year": "2001", "value": 33.94}, {"year": "2002", "value": 31.12}, {"year": "2004", "value": 17.7}, {"year": "2005", "value": 8.66}, {"year": "2006", "value": 9.81}, {"year": "2007", "value": 8.34}, {"year": "2009", "value": 10.2}, {"year": "2010", "value": 13.11}, {"year": "2011", "value": 9.57}, {"year": "2012", "value": 7.84}, {"year": "2013", "value": 10.92}, {"year": "2017", "value": 12.97}]}, "Zimbabwe": {"prim_f": [{"year": "2000", "value": 104.45}, {"year": "2001", "value": 108.75}, {"year": "2002", "value": 104.11}, {"year": "2003", "value": 103.25}, {"year": "2012", "value": 111.39}, {"year": "2013", "value": 108.71}], "prim_m": [{"year": "2000", "value": 107.31}, {"year": "2001", "value": 111.75}, {"year": "2002", "value": 106.54}, {"year": "2003", "value": 105.42}, {"year": "2012", "value": 113.65}, {"year": "2013", "value": 111.08}], "sec_f": [{"year": "2000", "value": 42.26}, {"year": "2001", "value": 43.11}, {"year": "2002", "value": 40.72}, {"year": "2003", "value": 37.44}, {"year": "2012", "value": 50.15}, {"year": "2013", "value": 51.35}], "prim_gpi": [{"year": "2000", "value": 0.97}, {"year": "2001", "value": 0.97}, {"year": "2002", "value": 0.98}, {"year": "2003", "value": 0.98}, {"year": "2012", "value": 0.98}, {"year": "2013", "value": 0.98}], "sec_gpi": [{"year": "2000", "value": 0.88}, {"year": "2001", "value": 0.88}, {"year": "2002", "value": 0.86}, {"year": "2003", "value": 0.88}, {"year": "2012", "value": 0.95}, {"year": "2013", "value": 0.96}], "completion_f": [{"year": "2001", "value": 90.26}, {"year": "2002", "value": 85.99}, {"year": "2003", "value": 85.45}, {"year": "2012", "value": 97.96}, {"year": "2013", "value": 98.85}], "completion_m": [{"year": "2001", "value": 96.21}, {"year": "2002", "value": 90.88}, {"year": "2003", "value": 90.13}, {"year": "2012", "value": 96.21}, {"year": "2013", "value": 98.12}], "oos_f": [{"year": "2000", "value": 10.14}, {"year": "2001", "value": 6.56}, {"year": "2002", "value": 9.26}, {"year": "2003", "value": 9.69}]}}, "reg_sec_gpi_trend": {"2000": 0.972, "2001": 0.964, "2002": 0.959, "2003": 1.029, "2004": 0.974, "2005": 0.991, "2006": 1.005, "2007": 0.96, "2008": 0.947, "2009": 0.942, "2010": 0.927, "2011": 0.94, "2012": 0.967, "2013": 0.982, "2014": 0.995, "2015": 0.989, "2016": 1.014, "2017": 1.061, "2018": 1.047, "2019": 1.006}, "reg_prim_gpi_trend": {"2000": 0.953, "2001": 0.961, "2002": 0.937, "2003": 0.963, "2004": 0.957, "2005": 0.963, "2006": 0.967, "2007": 0.954, "2008": 0.952, "2009": 0.954, "2010": 0.955, "2011": 0.933, "2012": 0.971, "2013": 0.971, "2014": 0.974, "2015": 0.974, "2016": 0.991, "2017": 0.985, "2018": 0.987, "2019": 1.013}, "completion_bars": [{"country": "Seychelles", "iso": "SYC", "f": 103.14, "m": 94.66}, {"country": "Botswana", "iso": "BWA", "f": 102.38, "m": 98.97}, {"country": "Mauritius", "iso": "MUS", "f": 100.95, "m": 96.17}, {"country": "Zimbabwe", "iso": "ZWE", "f": 98.85, "m": 98.12}, {"country": "Namibia", "iso": "NAM", "f": 96.92, "m": 91.24}, {"country": "Eswatini", "iso": "SWZ", "f": 95.57, "m": 93.41}, {"country": "Lesotho", "iso": "LSO", "f": 93.53, "m": 77.69}, {"country": "South Africa", "iso": "ZAF", "f": 92.12, "m": 88.59}, {"country": "Malawi", "iso": "MWI", "f": 85.03, "m": 75.71}, {"country": "Zambia", "iso": "ZMB", "f": 78.58, "m": 81.37}, {"country": "Comoros", "iso": "COM", "f": 77.23, "m": 76.22}, {"country": "Tanzania", "iso": "TZA", "f": 71.89, "m": 64.2}, {"country": "Congo, Dem. Rep.", "iso": "COD", "f": 70.33, "m": 69.49}, {"country": "Madagascar", "iso": "MDG", "f": 65.78, "m": 60.81}, {"country": "Mozambique", "iso": "MOZ", "f": 51.29, "m": 58.18}, {"country": "Angola", "iso": "AGO", "f": 33.55, "m": 59.01}]};
+
+// ─── helpers ───────────────────────────────────────────────────────────────
+const fmt1 = v => v == null ? '—' : Number(v).toFixed(2);
+const fmtPct = v => v == null ? '—' : Number(v).toFixed(1) + '%';
+const TEAL='#1D6B6B', ROSE='#C0443A', GOLD='#B8860B', MUTED='#7A756A', RULE='#C8C2B4';
+const LINE2='#2E9090', INK='#1A1B18';
+
+Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+Chart.defaults.color = MUTED;
+Chart.defaults.borderColor = RULE;
+Chart.defaults.plugins.legend.labels.boxWidth = 10;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+const CHARTS = {};
+function destroyChart(id){ if(CHARTS[id]){ CHARTS[id].destroy(); delete CHARTS[id]; } }
+
+// ─── hero meta ─────────────────────────────────────────────────────────────
+function renderHero(){
+  const cards = DATA.country_cards;
+  const gpis_sec = cards.filter(c=>c.sec_gpi!=null).map(c=>c.sec_gpi);
+  const avgSecGPI = (gpis_sec.reduce((a,b)=>a+b,0)/gpis_sec.length).toFixed(2);
+  const ahead = cards.filter(c=>c.sec_gpi>=1.0).length;
+  const comps = cards.filter(c=>c.prim_completion_f!=null).map(c=>c.prim_completion_f);
+  const avgComp = (comps.reduce((a,b)=>a+b,0)/comps.length).toFixed(0);
+  document.getElementById('heroMeta').innerHTML = [
+    {v: '16', l: 'SADC countries tracked'},
+    {v: '2000–2020', l: 'Twenty-year window'},
+    {v: avgSecGPI, l: 'Average secondary GPI'},
+    {v: ahead+'/'+cards.length, l: 'Countries where girls lead'},
+    {v: avgComp+'%', l: 'Avg. female primary completion'},
+  ].map(s=>`<div class="hero-stat"><span class="v serif">${s.v}</span><span class="l">${s.l}</span></div>`).join('');
+}
+
+// ─── regional GPI charts ────────────────────────────────────────────────────
+function renderRegionalGPI(){
+  const primSeries = DATA.reg_prim_gpi_trend;
+  const secSeries  = DATA.reg_sec_gpi_trend;
+  const yrs = Object.keys(primSeries).sort();
+  const yrs2 = Object.keys(secSeries).sort();
+
+  const opts = (yrs, label, color) => ({
+    type:'line',
+    data:{
+      labels: yrs.map(y=>y.slice(-2)),
+      datasets:[{
+        label, data: yrs.map(y=>primSeries[y]??null), borderColor:color,
+        backgroundColor:'transparent', borderWidth:2, pointRadius:3,
+        pointBackgroundColor:color, tension:0.3
+      },{
+        label:'Parity (1.0)', data: yrs.map(()=>1.0),
+        borderColor:RULE, borderDash:[4,3], borderWidth:1, pointRadius:0,
+        fill:false
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{min:0.8, max:1.2, grid:{color:'rgba(0,0,0,0.05)'},
+          ticks:{callback:v=>v.toFixed(1)},
+          title:{display:true,text:'GPI',font:{size:11},color:MUTED}}
+      }
+    }
+  });
+
+  CHARTS.primGPI = new Chart(document.getElementById('chartPrimGPI'), {
+    ...opts(yrs,'Primary GPI',TEAL),
+    data:{
+      labels:yrs.map(y=>y.slice(-2)),
+      datasets:[
+        {label:'Primary GPI', data:yrs.map(y=>primSeries[y]??null), borderColor:TEAL, backgroundColor:'transparent', borderWidth:2, pointRadius:3, pointBackgroundColor:TEAL, tension:0.3},
+        {label:'Parity (1.0)', data:yrs.map(()=>1.0), borderColor:RULE, borderDash:[4,3], borderWidth:1.5, pointRadius:0}
+      ]
+    }
+  });
+
+  CHARTS.secGPI = new Chart(document.getElementById('chartSecGPI'), {
+    type:'line',
+    data:{
+      labels:yrs2.map(y=>y.slice(-2)),
+      datasets:[
+        {label:'Secondary GPI', data:yrs2.map(y=>secSeries[y]??null), borderColor:LINE2, backgroundColor:'transparent', borderWidth:2, pointRadius:3, pointBackgroundColor:LINE2, tension:0.3},
+        {label:'Parity (1.0)', data:yrs2.map(()=>1.0), borderColor:RULE, borderDash:[4,3], borderWidth:1.5, pointRadius:0}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{min:0.8,max:1.2,grid:{color:'rgba(0,0,0,0.05)'},ticks:{callback:v=>v.toFixed(1)},
+          title:{display:true,text:'GPI',font:{size:11},color:MUTED}}
+      }
+    }
+  });
+
+  document.getElementById('insightParity').innerHTML =
+    `The SADC region <b>reached approximate gender parity at primary level</b> through the 2000s and has held it — but the secondary GPI tells a more complicated story. The regional average crossed 1.0 around 2015, meaning more girls than boys are now enrolled in secondary school across the region on aggregate. This reversal hides enormous variation: <b>Angola and DRC still sit below 0.70</b>, while Lesotho exceeds 1.35.`;
+}
+
+// ─── country cards ─────────────────────────────────────────────────────────
+let selectedCountry = 'Zimbabwe';
+let activeFilter = 'all';
+
+function gpiColor(gpi){
+  if(gpi==null) return MUTED;
+  if(gpi>=1.0) return TEAL;
+  if(gpi>=0.9) return GOLD;
+  return ROSE;
+}
+function gpiPct(gpi){
+  if(gpi==null) return 0;
+  // map 0.5..1.5 → 0..100, with 1.0 = 50
+  return Math.max(0, Math.min(100, (gpi/2)*100));
+}
+function statusLabel(gpi){
+  if(gpi==null) return '';
+  if(gpi>=1.0) return '<span class="badge ahead">Girls ahead</span>';
+  if(gpi>=0.9) return '<span class="badge close">Near parity</span>';
+  return '<span class="badge behind">Girls behind</span>';
+}
+function filterFn(card){
+  const g = card.sec_gpi;
+  if(activeFilter==='ahead') return g!=null && g>=1.0;
+  if(activeFilter==='close') return g!=null && g>=0.9 && g<1.0;
+  if(activeFilter==='behind') return g!=null && g<0.9;
+  return true;
+}
+
+function renderCards(){
+  const grid = document.getElementById('countryGrid');
+  const cards = DATA.country_cards.filter(filterFn);
+  grid.innerHTML = cards.map(c=>`
+    <div class="cc${c.country===selectedCountry?' selected':''}" data-cn="${c.country}" onclick="selectCountry('${c.country}')">
+      <div class="cc-top">
+        <div class="cc-flag">${c.iso}</div>
+        <div>
+          <div class="cc-name">${c.country}</div>
+          <div class="cc-iso">${statusLabel(c.sec_gpi)}</div>
+        </div>
+      </div>
+      <div class="gpi-gauge-wrap">
+        <div class="gpi-label">
+          <span class="name">Primary GPI</span>
+          <span class="val" style="color:${gpiColor(c.prim_gpi)}">${fmt1(c.prim_gpi)}</span>
+        </div>
+        <div class="gpi-track">
+          <div class="gpi-fill" style="width:${gpiPct(c.prim_gpi)}%;background:${gpiColor(c.prim_gpi)};"></div>
+          <div class="gpi-midline"></div>
+        </div>
+      </div>
+      <div class="gpi-gauge-wrap">
+        <div class="gpi-label">
+          <span class="name">Secondary GPI</span>
+          <span class="val" style="color:${gpiColor(c.sec_gpi)}">${fmt1(c.sec_gpi)}</span>
+        </div>
+        <div class="gpi-track">
+          <div class="gpi-fill" style="width:${gpiPct(c.sec_gpi)}%;background:${gpiColor(c.sec_gpi)};"></div>
+          <div class="gpi-midline"></div>
+        </div>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat"><b>${fmtPct(c.prim_completion_f)}</b>Girls' completion</div>
+        <div class="cc-stat"><b>${fmtPct(c.out_of_school_f)}</b>Girls out of school</div>
+        <div class="cc-stat"><b>${fmtPct(c.youth_lit_f)}</b>Youth lit. (F)</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('insightCards').innerHTML =
+    `<b>${DATA.country_cards.filter(c=>c.sec_gpi>=1.0).length} of 16 countries</b> now have more girls than boys enrolled in secondary school. But enrollment is only part of the picture — Mozambique's female primary completion rate sits at just <b>51%</b>, and Angola's at <b>34%</b>, despite reasonable GPI numbers at primary level.`;
+}
+
+function selectCountry(cn){
+  selectedCountry = cn;
+  document.querySelectorAll('.cc').forEach(el=>{
+    el.classList.toggle('selected', el.dataset.cn===cn);
+  });
+  renderTrends(cn);
+  document.getElementById('trends').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ─── filter pills ───────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-pill').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderCards();
+  });
+});
+
+// ─── trend charts ───────────────────────────────────────────────────────────
+function renderTrends(cn){
+  const td = DATA.trend_data[cn];
+  if(!td) return;
+  document.getElementById('trendTitle1').textContent = cn + ' — GPI over time';
+  document.getElementById('trendHint1').textContent = 'Primary and secondary gender parity index';
+  document.getElementById('trendTitle2').textContent = cn + ' — Primary completion rate';
+  document.getElementById('trendHint2').textContent = 'Female vs. male, % of relevant age group';
+
+  const gpiYrs = [...new Set([...td.prim_gpi.map(d=>d.year), ...td.sec_gpi.map(d=>d.year)])].sort();
+  const gpiPrimMap = Object.fromEntries(td.prim_gpi.map(d=>[d.year,d.value]));
+  const gpiSecMap  = Object.fromEntries(td.sec_gpi.map(d=>[d.year,d.value]));
+
+  destroyChart('trendGPI');
+  CHARTS.trendGPI = new Chart(document.getElementById('chartTrendGPI'),{
+    type:'line',
+    data:{
+      labels: gpiYrs.map(y=>y.slice(-2)),
+      datasets:[
+        {label:'Primary GPI', data:gpiYrs.map(y=>gpiPrimMap[y]??null), borderColor:TEAL, backgroundColor:'transparent', borderWidth:2, pointRadius:4, pointBackgroundColor:TEAL, tension:0.3, spanGaps:false},
+        {label:'Secondary GPI', data:gpiYrs.map(y=>gpiSecMap[y]??null), borderColor:LINE2, borderDash:[6,3], backgroundColor:'transparent', borderWidth:2, pointRadius:4, pointBackgroundColor:LINE2, tension:0.3, spanGaps:false},
+        {label:'Parity', data:gpiYrs.map(()=>1.0), borderColor:RULE, borderDash:[3,3], borderWidth:1, pointRadius:0}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{min:0.5,max:1.6,grid:{color:'rgba(0,0,0,0.04)'},ticks:{callback:v=>v.toFixed(1)},
+          title:{display:true,text:'GPI',font:{size:11},color:MUTED}}
+      }
+    }
+  });
+
+  const compYrs = [...new Set([...td.completion_f.map(d=>d.year), ...td.completion_m.map(d=>d.year)])].sort();
+  const compFMap = Object.fromEntries(td.completion_f.map(d=>[d.year,d.value]));
+  const compMMap = Object.fromEntries(td.completion_m.map(d=>[d.year,d.value]));
+
+  destroyChart('trendComp');
+  CHARTS.trendComp = new Chart(document.getElementById('chartTrendCompletion'),{
+    type:'bar',
+    data:{
+      labels: compYrs.map(y=>y.slice(-2)),
+      datasets:[
+        {label:'Female', data:compYrs.map(y=>compFMap[y]??null), backgroundColor:TEAL+'CC', borderRadius:2, maxBarThickness:14},
+        {label:'Male',   data:compYrs.map(y=>compMMap[y]??null), backgroundColor:INK+'44', borderRadius:2, maxBarThickness:14},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{min:0,max:130,grid:{color:'rgba(0,0,0,0.04)'},
+          ticks:{callback:v=>v+'%'},
+          title:{display:true,text:'% of relevant age group',font:{size:11},color:MUTED}}
+      }
+    }
+  });
+
+  // build trend selector buttons
+  document.querySelectorAll('.ts-btn').forEach(b=>b.classList.toggle('active', b.dataset.cn===cn));
+}
+
+function buildTrendSelector(){
+  const sel = document.getElementById('trendSelector');
+  sel.innerHTML = DATA.country_cards.map(c=>`
+    <button class="ts-btn${c.country===selectedCountry?' active':''}" data-cn="${c.country}" onclick="selectCountry('${c.country}')">${c.country}</button>
+  `).join('');
+}
+
+// ─── completion chart ───────────────────────────────────────────────────────
+function renderCompletion(){
+  const bars = DATA.completion_bars.filter(b=>b.f!=null);
+  destroyChart('completion');
+  CHARTS.completion = new Chart(document.getElementById('chartCompletion'),{
+    type:'bar',
+    data:{
+      labels: bars.map(b=>b.country),
+      datasets:[
+        {label:'Female', data:bars.map(b=>b.f), backgroundColor:TEAL+'CC', borderRadius:3, maxBarThickness:14},
+        {label:'Male',   data:bars.map(b=>b.m), backgroundColor:INK+'33', borderRadius:3, maxBarThickness:14},
+      ]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},
+        tooltip:{callbacks:{label:item=>`${item.dataset.label}: ${item.raw?.toFixed(1)}%`}}},
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,0.05)'}, ticks:{callback:v=>v+'%'}, min:0, max:115},
+        y:{grid:{display:false}}
+      }
+    }
+  });
+
+  const worst = DATA.completion_bars.filter(b=>b.f!=null).sort((a,b)=>a.f-b.f)[0];
+  document.getElementById('insightCompletion').innerHTML =
+    `<b>The completion gap is where the real crisis lives.</b> ${worst.country}'s female primary completion rate stands at just ${worst.f?.toFixed(1)}%, the lowest in the region. Even where GPI looks healthy, millions of girls are exiting the education system before completing a single level — meaning parity in enrollment can mask a completion crisis happening beneath the surface.`;
+}
+
+// ─── findings table ─────────────────────────────────────────────────────────
+function renderFindings(){
+  const rows = DATA.country_cards.map(c=>`
+    <tr>
+      <td><strong>${c.country}</strong></td>
+      <td class="num">${fmt1(c.sec_gpi)}</td>
+      <td>${statusLabel(c.sec_gpi)}</td>
+      <td class="num">${fmt1(c.prim_gpi)}</td>
+      <td class="num">${fmtPct(c.prim_completion_f)}</td>
+      <td class="num">${fmtPct(c.out_of_school_f)}</td>
+    </tr>`).join('');
+  document.getElementById('findingsTable').innerHTML = `
+    <thead><tr>
+      <th>Country</th>
+      <th>Sec. GPI</th>
+      <th>Status</th>
+      <th>Prim. GPI</th>
+      <th>Girls' Completion</th>
+      <th>Girls out of school %</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>`;
+}
+
+// ─── init ───────────────────────────────────────────────────────────────────
+renderHero();
+renderRegionalGPI();
+renderCards();
+buildTrendSelector();
+renderTrends(selectedCountry);
+renderCompletion();
+renderFindings();
+</script>
+</body>
+</html>
