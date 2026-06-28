@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="DataStories.fyi — where data tells the story. Analyses you haven't seen before, built on public data, framed around questions that matter.">
+<title>DataStories.fyi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0F0F0F;
+  --paper:#FAFAF8;
+  --paper2:#F2EFE9;
+  --rule:#DDD9D0;
+  --masthead:#0F1923;
+  --amber:#E8A020;
+  --amber-dim:rgba(232,160,32,0.12);
+  --teal:#1A8A8A;
+  --teal-dim:rgba(26,138,138,0.10);
+  --muted:#6B6B6B;
+  --muted2:#9A9590;
+  --maxw:1080px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--paper);}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.6;
+}
+::selection{background:var(--amber);color:var(--masthead);}
+a{text-decoration:none;color:inherit;}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+
+/* ── MASTHEAD ── */
+.masthead{
+  background:var(--masthead);
+  padding:0;
+  border-bottom:3px solid var(--amber);
+}
+.masthead-inner{
+  max-width:var(--maxw);margin:0 auto;padding:0 32px;
+}
+.masthead-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  font-family:'DM Mono';font-size:0.7rem;
+  letter-spacing:0.08em;text-transform:uppercase;
+  color:rgba(255,255,255,0.35);
+}
+.masthead-top a{
+  color:rgba(255,255,255,0.5);
+  transition:color .15s;
+}
+.masthead-top a:hover{color:var(--amber);}
+.masthead-top .nav-links{display:flex;gap:24px;}
+
+.masthead-name{
+  padding:36px 0 28px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.pub-name{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:clamp(3rem,8vw,7rem);
+  font-weight:900;
+  font-style:italic;
+  color:#fff;
+  letter-spacing:-0.02em;
+  line-height:1;
+}
+.pub-name .fyi{
+  color:var(--amber);
+  font-style:normal;
+  font-size:0.55em;
+  letter-spacing:0.01em;
+  vertical-align:middle;
+  margin-left:4px;
+}
+.pub-tagline{
+  font-family:'DM Mono';
+  font-size:0.72rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.45);
+  margin-top:12px;
+}
+
+.masthead-strip{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;
+  font-family:'DM Mono';font-size:0.68rem;
+  letter-spacing:0.06em;color:rgba(255,255,255,0.3);
+}
+.masthead-strip .issue{color:var(--amber);font-weight:500;}
+
+/* ── CONTENT AREA ── */
+main{padding:56px 0 0;}
+
+/* ── SECTION LABELS ── */
+.section-rule{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:28px;
+}
+.section-rule::before,
+.section-rule::after{content:'';flex:1;height:1px;background:var(--rule);}
+.section-label{
+  font-family:'DM Mono';font-size:0.66rem;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--muted2);white-space:nowrap;
+}
+
+/* ── FEATURED STORY ── */
+.featured{
+  margin-bottom:52px;
+}
+.story-card-featured{
+  display:grid;grid-template-columns:1fr 1.1fr;
+  border:1px solid var(--rule);
+  border-radius:4px;overflow:hidden;
+  background:#fff;
+  transition:box-shadow .2s;
+}
+.story-card-featured:hover{
+  box-shadow:0 8px 48px rgba(15,25,35,0.1);
+}
+.featured-visual{
+  background:linear-gradient(160deg, #0F1923 0%, #1A3A3A 60%, #1A8A8A22 100%);
+  min-height:420px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:36px;position:relative;overflow:hidden;
+}
+.featured-visual::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 48px,
+    rgba(255,255,255,0.025) 48px,
+    rgba(255,255,255,0.025) 49px
+  );
+}
+.featured-visual::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 48px,
+    rgba(255,255,255,0.015) 48px,
+    rgba(255,255,255,0.015) 49px
+  );
+}
+.featured-stat{
+  position:relative;z-index:1;
+  font-family:'Playfair Display',serif;
+  font-size:4.5rem;font-weight:900;font-style:italic;
+  color:#fff;line-height:1;margin-bottom:8px;
+}
+.featured-stat span{color:var(--amber);font-size:0.45em;font-style:normal;font-family:'DM Mono';vertical-align:middle;letter-spacing:0.04em;}
+.featured-caption{
+  position:relative;z-index:1;
+  font-family:'DM Mono';font-size:0.7rem;
+  letter-spacing:0.06em;text-transform:uppercase;
+  color:rgba(255,255,255,0.45);
+}
+
+.featured-body{
+  padding:40px 40px 36px;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+}
+.story-cat{
+  font-family:'DM Mono';font-size:0.66rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:14px;display:block;
+}
+.story-cat::before{content:'■ ';font-size:0.5em;vertical-align:middle;}
+.story-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,3vw,2.4rem);
+  font-weight:700;line-height:1.2;
+  margin-bottom:18px;color:var(--ink);
+}
+.story-dek{
+  font-size:1rem;color:var(--muted);
+  line-height:1.75;margin-bottom:28px;
+  font-weight:300;
+}
+.story-dek strong{color:var(--ink);font-weight:500;}
+.story-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:20px;border-top:1px solid var(--rule);
+  flex-wrap:wrap;gap:12px;
+}
+.story-byline{font-family:'DM Mono';font-size:0.68rem;color:var(--muted2);letter-spacing:0.04em;}
+.story-byline strong{color:var(--ink);}
+.read-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#fff;
+  padding:10px 22px;border-radius:3px;
+  font-size:0.82rem;font-weight:600;
+  letter-spacing:0.02em;
+  transition:background .15s;
+}
+.read-btn:hover{background:var(--masthead);}
+.read-btn::after{content:'→';transition:transform .15s;}
+.read-btn:hover::after{transform:translateX(3px);}
+
+/* ── STORIES GRID ── */
+.stories-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1px;
+  background:var(--rule);
+  border:1px solid var(--rule);
+  border-radius:4px;overflow:hidden;
+  margin-bottom:52px;
+}
+.story-card{
+  background:#fff;padding:32px;
+  display:flex;flex-direction:column;
+  transition:background .15s;
+  position:relative;
+}
+.story-card:hover{background:var(--paper2);}
+.story-card.coming{cursor:default;}
+.story-card.coming:hover{background:#fff;}
+
+.coming-tag{
+  position:absolute;top:20px;right:20px;
+  font-family:'DM Mono';font-size:0.62rem;
+  letter-spacing:0.08em;text-transform:uppercase;
+  background:var(--paper2);border:1px solid var(--rule);
+  color:var(--muted2);padding:3px 9px;border-radius:2px;
+}
+.card-num{
+  font-family:'DM Mono';font-size:0.65rem;
+  color:var(--muted2);letter-spacing:0.06em;
+  margin-bottom:20px;padding-bottom:16px;
+  border-bottom:1px solid var(--rule);
+}
+.card-cat{
+  font-family:'DM Mono';font-size:0.64rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:10px;display:block;
+}
+.card-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem;font-weight:700;
+  line-height:1.25;margin-bottom:14px;color:var(--ink);
+  flex:1;
+}
+.card-dek{
+  font-size:0.88rem;color:var(--muted);
+  line-height:1.7;margin-bottom:20px;font-weight:300;
+}
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--rule);
+}
+.card-date{font-family:'DM Mono';font-size:0.65rem;color:var(--muted2);}
+.card-link{
+  font-size:0.78rem;font-weight:600;color:var(--teal);
+  display:flex;align-items:center;gap:4px;
+  transition:gap .15s;
+}
+.card-link:hover{gap:8px;}
+.card-link::after{content:'→';}
+.card-link.disabled{color:var(--muted2);pointer-events:none;}
+
+/* ── ABOUT THIS PUBLICATION ── */
+.about-pub{
+  background:var(--masthead);
+  padding:56px 0;
+  margin-bottom:0;
+}
+.about-pub-inner{
+  max-width:700px;
+}
+.about-pub .label{
+  font-family:'DM Mono';font-size:0.68rem;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:18px;display:block;
+}
+.about-pub p{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.1rem,2vw,1.35rem);
+  font-style:italic;
+  color:rgba(255,255,255,0.75);
+  line-height:1.8;
+  font-weight:400;
+}
+.about-pub p strong{
+  color:#fff;font-style:normal;
+}
+.about-pub .sig{
+  margin-top:28px;font-family:'DM Mono';
+  font-size:0.72rem;letter-spacing:0.06em;
+  color:rgba(255,255,255,0.35);font-style:normal;
+}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--masthead);
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:28px 0;
+}
+footer .wrap{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-brand{
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-weight:700;
+  font-size:1.1rem;color:#fff;
+  letter-spacing:-0.01em;
+}
+.footer-brand span{color:var(--amber);}
+.footer-right{
+  font-family:'DM Mono';font-size:0.65rem;
+  letter-spacing:0.06em;color:rgba(255,255,255,0.3);
+}
+.footer-links{
+  display:flex;gap:20px;
+  font-family:'DM Mono';font-size:0.65rem;
+  letter-spacing:0.06em;
+}
+.footer-links a{
+  color:rgba(255,255,255,0.35);
+  transition:color .15s;
+}
+.footer-links a:hover{color:var(--amber);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .story-card-featured{grid-template-columns:1fr;}
+  .featured-visual{min-height:220px;}
+  .featured-stat{font-size:3rem;}
+  .wrap{padding:0 18px;}
+  .masthead-inner{padding:0 18px;}
+  .pub-name{font-size:clamp(2.4rem,12vw,4rem);}
+  .masthead-top .nav-links{display:none;}
+  .featured-body{padding:24px;}
+  .story-card{padding:24px;}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-top">
+      <span>Data Analytics · Data Science · Machine Learning · AI</span>
+      <nav class="nav-links">
+        <a href="#stories">Stories</a>
+        <a href="#about">About</a>
+        <a href="https://github.com/charlenemuchechesi" target="_blank">GitHub</a>
+      </nav>
+    </div>
+
+    <div class="masthead-name">
+      <div class="pub-name">DataStories<span class="fyi">.fyi</span></div>
+      <div class="pub-tagline">Where we tell impactful stories using data</div>
+    </div>
+
+    <div class="masthead-strip">
+      <span>Public data. Compelling questions. Real insights.</span>
+      <span class="issue">Vol. 1 · Issue 1 · 2025</span>
+      <span>Southern Africa &amp; Beyond</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+<div class="wrap">
+
+  <!-- FEATURED STORY -->
+  <section class="featured" id="stories" style="padding-top:52px;">
+    <div class="section-rule"><span class="section-label">Featured Story</span></div>
+
+    <a href="sadc-girls-education.html" class="story-card-featured">
+      <div class="featured-visual">
+        <div class="featured-stat">9/16 <span>Countries</span></div>
+        <div class="featured-caption">Girls now outnumber boys in secondary school</div>
+      </div>
+      <div class="featured-body">
+        <div>
+          <span class="story-cat">Education · Southern Africa</span>
+          <h2 class="story-title">A Seat at the Table</h2>
+          <p class="story-dek">Nine of sixteen Southern African countries now have <strong>more girls than boys enrolled in secondary school</strong>. That sounds like a victory — until you look at what happens next. Angola's female primary completion rate sits at 34%. Mozambique's at 51%. Enrollment is not the same as staying. This is the story the headline numbers don't tell.</p>
+        </div>
+        <div class="story-meta">
+          <span class="story-byline">By <strong>Charlene Muchechesi</strong> · World Bank WDI · 16 countries · 2000–2020</span>
+          <span class="read-btn">Read the analysis</span>
+        </div>
+      </div>
+    </a>
+  </section>
+
+  <!-- COMING STORIES -->
+  <section style="padding-bottom:52px;">
+    <div class="section-rule"><span class="section-label">Coming Next</span></div>
+    <div class="stories-grid">
+
+      <div class="story-card coming">
+        <span class="coming-tag">In Progress</span>
+        <div class="card-num">Story 02</div>
+        <span class="card-cat">Business · Customer Analytics</span>
+        <h3 class="card-title">I Never Saw It Coming</h3>
+        <p class="card-dek">We never believe someone who says they didn't see the breakup coming. The signs were there — the long silences, the short replies, the missing effort. Businesses lose customers the same way. The pattern is always there. They just aren't paying attention.</p>
+        <div class="card-footer">
+          <span class="card-date">Coming 2025 · Telco Churn Data</span>
+          <span class="card-link disabled">Coming soon</span>
+        </div>
+      </div>
+
+      <div class="story-card coming">
+        <span class="coming-tag">Planned</span>
+        <div class="card-num">Story 03</div>
+        <span class="card-cat">Finance · Financial Inclusion</span>
+        <h3 class="card-title">Credit Without History</h3>
+        <p class="card-dek">Millions of Zimbabweans have never had a bank account. That doesn't mean they don't have a financial life — it means the system wasn't designed to see it. What if we built a credit model that actually could?</p>
+        <div class="card-footer">
+          <span class="card-date">Planned · Zimbabwe Data</span>
+          <span class="card-link disabled">Coming soon</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- ABOUT THIS PUBLICATION -->
+<section class="about-pub" id="about">
+  <div class="wrap">
+    <div class="about-pub-inner">
+      <span class="label">About DataStories.fyi</span>
+      <p>This is our little corner of the internet. We believe the most interesting stories are hiding in the datasets everyone already has access to — they just need the right question and someone willing to look. <strong>We use public data. We frame it around compelling questions. And we tell stories that go beyond the model.</strong></p>
+      <div class="sig">Built by Charlene Muchechesi · Harare, Zimbabwe · <a href="https://github.com/charlenemuchechesi" style="color:rgba(255,255,255,0.4);">GitHub</a> · <a href="https://linkedin.com/in/charlene-muchechesi" style="color:rgba(255,255,255,0.4);">LinkedIn</a></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-brand">DataStories<span>.fyi</span></div>
+    <div class="footer-links">
+      <a href="https://github.com/charlenemuchechesi" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/charlene-muchechesi" target="_blank">LinkedIn</a>
+    </div>
+    <div class="footer-right">© 2025 · Public data. Real stories.</div>
+  </div>
+</footer>
+
+</body>
+</html>
