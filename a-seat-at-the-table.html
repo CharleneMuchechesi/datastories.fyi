@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Seat at the Table — DataStories.fyi</title>
+<meta name="description" content="Nine of sixteen Southern African countries now have more girls than boys in secondary school. That sounds like a victory — until you look at what happens next.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0F0F0F;--paper:#FAFAF8;--paper2:#F2EFE9;
+  --rule:#DDD9D0;--masthead:#0F1923;
+  --amber:#E8A020;--amber-dim:rgba(232,160,32,0.12);
+  --teal:#1A8A8A;--teal-dim:rgba(26,138,138,0.10);
+  --rose:#C0443A;--rose-dim:rgba(192,68,58,0.1);
+  --muted:#6B6B6B;--muted2:#9A9590;--maxw:760px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--paper);}
+body{font-family:'Inter',system-ui,sans-serif;font-size:16px;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.6;}
+::selection{background:var(--amber);color:var(--masthead);}
+a{text-decoration:none;color:inherit;}
+
+/* ── MASTHEAD ── */
+.masthead{background:var(--masthead);border-bottom:3px solid var(--amber);}
+.masthead-inner{max-width:1080px;margin:0 auto;padding:0 32px;}
+.masthead-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 0;}
+.pub-logo{font-family:'Playfair Display',serif;font-weight:900;font-style:italic;font-size:1.4rem;color:#fff;letter-spacing:-0.01em;}
+.pub-logo span{color:var(--amber);font-style:normal;font-size:0.65em;vertical-align:middle;}
+.back-link{font-family:'DM Mono';font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:6px;transition:color .15s;}
+.back-link:hover{color:var(--amber);}
+.back-link::before{content:'←';}
+
+/* ── STORY HERO ── */
+.story-hero{background:linear-gradient(160deg,#0F1923 0%,#0d2d2d 60%,#1A3A3A 100%);padding:64px 0 0;position:relative;overflow:hidden;}
+.story-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 48px,rgba(255,255,255,0.02) 48px,rgba(255,255,255,0.02) 49px),repeating-linear-gradient(90deg,transparent,transparent 48px,rgba(255,255,255,0.015) 48px,rgba(255,255,255,0.015) 49px);}
+.story-hero-inner{max-width:var(--maxw);margin:0 auto;padding:0 32px;position:relative;z-index:1;}
+.story-cat{font-family:'DM Mono';font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--teal);margin-bottom:18px;display:block;}
+.story-h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,6vw,4rem);font-weight:900;font-style:italic;color:#fff;line-height:1.05;margin-bottom:18px;}
+.story-dek{font-size:1.1rem;color:rgba(255,255,255,0.6);line-height:1.75;max-width:58ch;margin-bottom:32px;font-weight:300;}
+.story-byline{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:20px 0;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Mono';font-size:0.7rem;letter-spacing:0.04em;color:rgba(255,255,255,0.35);}
+.story-byline strong{color:rgba(255,255,255,0.7);}
+.byline-sep{color:rgba(255,255,255,0.15);}
+
+.hero-stat-strip{display:flex;gap:0;background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.06);padding:0 32px;justify-content:center;}
+.hero-stat-strip-inner{max-width:var(--maxw);width:100%;display:flex;gap:0;}
+.h-stat{flex:1;padding:24px 0;text-align:center;border-right:1px solid rgba(255,255,255,0.06);}
+.h-stat:last-child{border-right:none;}
+.h-stat .v{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:#fff;line-height:1;display:block;}
+.h-stat .v em{color:var(--teal);font-style:normal;}
+.h-stat .l{font-family:'DM Mono';font-size:0.63rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.35);display:block;margin-top:6px;}
+
+/* ── ARTICLE ── */
+article{padding:56px 0 80px;}
+.prose{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+.prose p{font-size:1.05rem;line-height:1.85;color:#2A2A2A;margin-bottom:22px;font-weight:300;}
+.prose p strong{color:var(--ink);font-weight:600;}
+.prose h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin:52px 0 18px;color:var(--ink);line-height:1.2;}
+.prose h3{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin:36px 0 12px;color:var(--ink);font-style:italic;}
+
+.pull-quote{border-left:3px solid var(--teal);padding:20px 28px;margin:36px 0;background:var(--teal-dim);border-radius:0 4px 4px 0;}
+.pull-quote p{font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:var(--ink);line-height:1.6;margin:0;font-weight:400;}
+
+.insight-box{background:var(--teal-dim);border:1px solid rgba(26,138,138,0.2);border-left:3px solid var(--teal);border-radius:0 4px 4px 0;padding:20px 24px;margin:28px 0;}
+.insight-box .ib-label{font-family:'DM Mono';font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.insight-box p{color:#0a2a2a;margin:0;font-size:0.95rem;line-height:1.7;}
+
+.warning-box{background:var(--rose-dim);border:1px solid rgba(192,68,58,0.25);border-left:3px solid var(--rose);border-radius:0 4px 4px 0;padding:20px 24px;margin:28px 0;}
+.warning-box .wb-label{font-family:'DM Mono';font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--rose);margin-bottom:8px;}
+.warning-box p{color:#3a1a18;margin:0;font-size:0.95rem;line-height:1.7;}
+
+.chapter-break{text-align:center;padding:40px 0;font-family:'DM Mono';font-size:0.65rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted2);display:flex;align-items:center;gap:14px;margin:8px 0;}
+.chapter-break::before,.chapter-break::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+/* ── DASHBOARD EMBED ── */
+.dashboard-embed{
+  margin:40px 0;
+  border:1px solid var(--rule);border-radius:4px;overflow:hidden;
+  background:#fff;
+}
+.embed-label{
+  background:var(--masthead);padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.embed-label span{font-family:'DM Mono';font-size:0.68rem;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.embed-label a{font-family:'DM Mono';font-size:0.68rem;color:var(--amber);letter-spacing:0.04em;}
+.embed-label a:hover{text-decoration:underline;}
+.dashboard-embed iframe{
+  width:100%;border:none;display:block;
+  height:90vh;min-height:600px;
+}
+
+.conclusion{background:var(--masthead);padding:48px;border-radius:4px;margin-top:48px;}
+.conclusion h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-style:italic;color:#fff;margin-bottom:16px;}
+.conclusion p{color:rgba(255,255,255,0.6);font-size:0.97rem;line-height:1.8;margin-bottom:14px;font-weight:300;}
+.conclusion strong{color:#fff;}
+
+.back-strip{border-top:1px solid var(--rule);padding-top:40px;margin-top:40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.back-strip a{display:inline-flex;align-items:center;gap:8px;font-size:0.84rem;font-weight:600;color:var(--teal);transition:gap .15s;}
+.back-strip a:hover{gap:12px;}
+
+footer{background:var(--masthead);border-top:1px solid rgba(255,255,255,0.06);padding:24px 0;}
+footer .inner{max-width:1080px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-brand{font-family:'Playfair Display',serif;font-style:italic;font-weight:700;font-size:1rem;color:#fff;}
+.footer-brand span{color:var(--amber);}
+.footer-r{font-family:'DM Mono';font-size:0.65rem;letter-spacing:0.06em;color:rgba(255,255,255,0.3);}
+
+@media(max-width:640px){.prose,.story-hero-inner,.hero-stat-strip-inner{padding-left:18px;padding-right:18px;}.masthead-inner,.hero-stat-strip{padding-left:18px;padding-right:18px;}.story-h1{font-size:2rem;}.conclusion{padding:28px 20px;}.h-stat .v{font-size:1.5rem;}.dashboard-embed iframe{height:70vh;}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-bar">
+      <a href="index.html" class="pub-logo">DataStories<span>.fyi</span></a>
+      <a href="index.html" class="back-link">All stories</a>
+    </div>
+  </div>
+</header>
+
+<div class="story-hero">
+  <div class="story-hero-inner">
+    <span class="story-cat">Story 01 · Education · Southern Africa</span>
+    <h1 class="story-h1">A Seat at<br>the Table</h1>
+    <p class="story-dek">Nine of sixteen Southern African countries now have more girls than boys enrolled in secondary school. That sounds like a victory. Until you look at what happens next.</p>
+    <div class="story-byline">
+      <span>By <strong>Charlene Muchechesi</strong></span>
+      <span class="byline-sep">·</span>
+      <span>World Bank WDI · 16 SADC countries · 2000–2020</span>
+      <span class="byline-sep">·</span>
+      <span>2025</span>
+    </div>
+  </div>
+  <div class="hero-stat-strip">
+    <div class="hero-stat-strip-inner">
+      <div class="h-stat"><span class="v"><em>9/16</em></span><span class="l">Countries girls outnumber boys</span></div>
+      <div class="h-stat"><span class="v">34%</span><span class="l">Angola female completion rate</span></div>
+      <div class="h-stat"><span class="v"><em>1.35</em></span><span class="l">Lesotho secondary GPI</span></div>
+      <div class="h-stat"><span class="v">20yrs</span><span class="l">Of data analysed</span></div>
+    </div>
+  </div>
+</div>
+
+<article>
+<div class="prose">
+
+  <p style="margin-top:0;font-size:1.15rem;color:var(--ink);font-weight:400;">There is a version of progress that looks good on paper and hides a crisis underneath. In Southern Africa's classrooms, we have arrived at exactly that moment.</p>
+
+  <p>For decades, the story of girls' education in Africa was simple and grim: boys went to school more than girls. The Gender Parity Index — the ratio of female to male enrollment — sat below 1.0 across the continent. The mission was clear: close the gap.</p>
+
+  <p>By the 2010s, something shifted. Country after country in the SADC region crossed the threshold. <strong>Nine of sixteen nations now have more girls in secondary school than boys.</strong> The GPI crossed 1.0. On the dashboard of international development, the indicator turned green.</p>
+
+  <p>But enrollment is not education. And a number on a dashboard is not a girl in a classroom, learning.</p>
+
+  <div class="pull-quote">
+    <p>"A GPI of 1.0 means girls got through the door. It says nothing about whether they were allowed to stay."</p>
+  </div>
+
+  <div class="chapter-break">The Numbers</div>
+
+  <h2>What the Gender Parity Index actually tells us</h2>
+
+  <p>The GPI is a ratio: female enrollment divided by male enrollment. A score of 1.0 means exact parity. Below 1.0 means boys outnumber girls. Above 1.0 means girls outnumber boys.</p>
+
+  <p>The SADC regional average at primary level has hovered near 1.0 for most of the last two decades — a genuine achievement. At secondary level, the regional average crossed 1.0 around 2015, driven by countries like <strong>Lesotho (1.35)</strong>, Namibia, and South Africa.</p>
+
+  <p>But Lesotho's number tells its own story. When girls significantly outnumber boys in secondary school, it often means boys have exited the education system entirely — to work, to migrate, to survive. <strong>A GPI above 1.3 is not always a sign of girls thriving. Sometimes it is a sign of boys disappearing.</strong></p>
+
+  <div class="insight-box">
+    <div class="ib-label">The GPI Paradox</div>
+    <p>Lesotho has the highest secondary GPI in the region at 1.35 — more girls than boys in secondary school. But this is partly explained by the country's cattle herding tradition, which pulls boys out of education early. Progress for girls and crisis for boys can look identical in the data.</p>
+  </div>
+
+  <div class="chapter-break">The Hidden Gap</div>
+
+  <h2>Enrollment is not the same as completion</h2>
+
+  <p>Here is where the headline number breaks down entirely. Angola's secondary GPI is reasonable. But its <strong>female primary completion rate is 34%</strong>. One in three girls who enroll in primary school finishes it.</p>
+
+  <p>Mozambique sits at 51%. The Democratic Republic of Congo at 52%. These are not countries where girls cannot get into school. These are countries where girls get in — and then leave.</p>
+
+  <p>They leave because of pregnancy. Because of distance. Because their family needs income and a daughter's labour is more immediately valuable than her education. Because the school has no toilet. Because the teacher did not come this week. Because the family can only afford fees for one child and it will not be the girl.</p>
+
+  <div class="warning-box">
+    <div class="wb-label">⚠ The Completion Crisis</div>
+    <p>Angola: 34% female primary completion. Mozambique: 51%. DRC: 52%. In these countries, girls are enrolling — but more than half are not finishing even primary school. A parity index that looks healthy is masking a completion crisis happening beneath the surface.</p>
+  </div>
+
+  <div class="chapter-break">The Interactive Data</div>
+
+  <h2>Explore all 16 countries yourself</h2>
+
+  <p>The dashboard below contains the full dataset — 16 SADC countries, 2000 to 2020, across every key indicator: GPI at primary and secondary level, female primary completion rates, out-of-school percentages, and youth literacy. Click any country card to load its individual trend over time.</p>
+
+  <p>Pay particular attention to the countries where the GPI looks healthy but the completion rate tells a different story. That gap is where the real work is.</p>
+
+  <div class="dashboard-embed">
+    <div class="embed-label">
+      <span>📊 Interactive Dashboard · 16 SADC Countries · World Bank WDI</span>
+      <a href="sadc-girls-education.html" target="_blank">Open full screen ↗</a>
+    </div>
+    <iframe src="sadc-girls-education.html" title="A Seat at the Table — Girls Education Dashboard" loading="lazy"></iframe>
+  </div>
+
+  <div class="chapter-break">What It Means</div>
+
+  <h2>The numbers we should be watching instead</h2>
+
+  <p>The GPI is a useful starting point. It is not the destination. The indicators that actually tell us whether girls are receiving an education — not just entering one — are completion rates, out-of-school ratios, and ultimately, youth literacy rates.</p>
+
+  <p>On youth literacy, the picture is more mixed. Zimbabwe, South Africa, and Namibia show strong numbers. Angola, Mozambique, and Madagascar lag significantly. And youth literacy is the compounding variable: a girl who cannot read at 20 cannot participate in a formal economy, cannot read a medical pamphlet, cannot help her child with homework.</p>
+
+  <p>The development community has spent two decades optimising for enrollment parity. <strong>The next decade needs to optimise for what happens after the door opens.</strong></p>
+
+  <div class="conclusion">
+    <h2>A seat at the table is not enough.</h2>
+    <p>Nine of sixteen countries have achieved secondary enrollment parity. That is real progress, hard-won over twenty years of policy work, investment, and community effort. It should be acknowledged.</p>
+    <p>But a seat at the table means nothing if you are asked to leave before the meal is served. <strong>Angola's girls are enrolling. They are not finishing.</strong> Mozambique's girls are arriving at school. They are not staying.</p>
+    <p>The data tells us exactly where the system is failing them. Completion rates. Distance to school. Sanitation access. Teacher availability. These are not mysteries — they are measurable, trackable, and fixable. The question is whether the same energy that went into closing the enrollment gap will now go into closing the completion gap.</p>
+    <p>Because right now, too many girls have a seat at the table — and are being told the table is not for them.</p>
+  </div>
+
+  <div class="back-strip">
+    <a href="index.html">← Back to all stories</a>
+    <a href="i-never-saw-it-coming.html">Read Story 02: I Never Saw It Coming →</a>
+  </div>
+
+</div>
+</article>
+
+<footer>
+  <div class="inner">
+    <div class="footer-brand">DataStories<span>.fyi</span></div>
+    <div class="footer-r">Data: World Bank WDI · CC BY 4.0 · 2025</div>
+  </div>
+</footer>
+
+</body>
+</html>
