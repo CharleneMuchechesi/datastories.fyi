@@ -168,10 +168,16 @@
     border-radius: 4px; padding: 4px 0; margin-top: 4px;
   }
   .ledger-row{
-    display:grid; grid-template-columns: 34px 1fr auto; align-items:center;
+    display:grid; grid-template-columns: 34px 1fr auto auto; align-items:center;
     gap: 10px; padding: 10px 14px; border-bottom: 1px dashed var(--paper-line);
     font-size: 13.5px;
   }
+  .del-tx{
+    background:none; border:none; cursor:pointer; padding: 0;
+    color: #8a806a; font-family:'IBM Plex Mono',monospace; font-size: 11px;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .del-tx:hover{ color: var(--rust); }
   .ledger-row:last-child{ border-bottom: none; }
   .stamp-dot{
     width: 26px; height:26px; border-radius:50%;
@@ -278,16 +284,18 @@
     <div class="eyebrow">Confidential · Private Ledger</div>
     <h1>Mukoma Bob</h1>
     <div class="sub">// personal ledger: private wealth, investments, savings</div>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="email" autocomplete="username">
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="password" autocomplete="current-password">
-    </div>
-    <button class="btn-gold" id="login-btn">Open ledger</button>
-    <div id="login-error"></div>
+    <form id="login-form">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn-gold" id="login-btn">Sign in</button>
+      <div id="login-error"></div>
+    </form>
     <div class="verse">"There is treasure to be desired and oil in the dwelling of the wise, but a foolish man spendeth it up."<span class="ref">Proverbs 21:20, KJV</span></div>
   </div>
 </div>
@@ -339,16 +347,15 @@
 
     <div>
       <section class="panel">
-        <h2>Private wealth, investments &amp; savings</h2>
-        <div class="hint">What we're building, sorted by kind, and how close we are. Money you haven't put toward a goal shows up as "Unallocated funds" above, it moves automatically as you edit the amounts here.</div>
+        <h2>Savings &amp; investments</h2>
+        <div class="hint">What we're building, sorted by kind, and how close we are.</div>
         <div id="goals-list">
           <div class="empty" style="color:var(--ink-muted)">No goals yet.</div>
         </div>
         <form class="goal-form" id="goal-form">
           <select id="g-category" class="full">
-            <option value="Private Wealth">Private Wealth</option>
-            <option value="Investments">Investments</option>
             <option value="Savings" selected>Savings</option>
+            <option value="Investments">Investments</option>
           </select>
           <input type="text" id="g-title" class="full" placeholder="Goal (e.g. Emergency fund)" required>
           <input type="number" step="0.01" min="0" id="g-target" placeholder="Target amount" required>
@@ -402,7 +409,8 @@ async function checkSession(){
   if (data.session) showApp(data.session.user);
 }
 
-$('login-btn')?.addEventListener('click', async () => {
+$('login-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
   if (!sb) return;
   $('login-error').textContent = '';
   const email = $('email').value.trim();
@@ -439,9 +447,19 @@ function renderLedger(rows){
         <span class="date">${r.occurred_on}</span>
       </div>
       <div class="ledger-amt ${r.type}">${r.type === 'income' ? '+' : '−'}${fmt(r.amount)}</div>
+      <button type="button" class="del-tx" data-id="${r.id}">Delete</button>
     </div>
   `).join('');
 }
+
+$('ledger-list')?.addEventListener('click', async (e) => {
+  const delBtn = e.target.closest('.del-tx');
+  if (!delBtn) return;
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  const { error } = await sb.from('transactions').delete().eq('id', delBtn.dataset.id);
+  if (error) { alert('Could not delete: ' + error.message); return; }
+  loadTransactions();
+});
 
 function renderStats(rows){
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
@@ -486,18 +504,17 @@ async function loadGoals(){
 function updateUnallocated(){
   const income = allTransactions.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
   const expense = allTransactions.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
-  const allocated = allGoals.reduce((s,g) => s + Number(g.current_amount || 0), 0);
-  const unallocated = income - expense - allocated;
+  const net = income - expense;
   const el = $('stat-unallocated');
-  el.textContent = (unallocated >= 0 ? '' : '-') + fmt(Math.abs(unallocated));
-  el.className = 'value ' + (unallocated < 0 ? 'neg' : 'gold');
+  el.textContent = (net >= 0 ? '' : '-') + fmt(Math.abs(net));
+  el.className = 'value ' + (net < 0 ? 'neg' : 'gold');
 }
 
 function renderGoals(rows){
   const el = $('goals-list');
   if (!rows.length) { el.innerHTML = '<div class="empty" style="color:var(--ink-muted)">No goals yet.</div>'; return; }
 
-  const order = ['Private Wealth', 'Investments', 'Savings'];
+  const order = ['Savings', 'Investments'];
   const groups = {};
   order.forEach(cat => groups[cat] = []);
   rows.forEach(g => {
@@ -530,7 +547,7 @@ function renderGoals(rows){
 }
 
 function goalEditFormHtml(g){
-  const opts = ['Private Wealth', 'Investments', 'Savings'].map(c =>
+  const opts = ['Savings', 'Investments'].map(c =>
     `<option value="${c}" ${g.category === c ? 'selected' : ''}>${c}</option>`).join('');
   return `
     <div class="goal editing" data-id="${g.id}">
