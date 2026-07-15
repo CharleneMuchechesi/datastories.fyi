@@ -224,6 +224,24 @@
   }
   .thermo-fill{ height:100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
   .goal-date{ font-size:11px; color: var(--ink-muted); margin-top: 6px; font-family:'IBM Plex Mono',monospace; }
+  .goal-actions{ margin-top: 8px; display:flex; gap: 14px; }
+  .link-btn{
+    background:none; border:none; padding:0; cursor:pointer;
+    font-family:'IBM Plex Mono',monospace; font-size: 11px; letter-spacing: 0.04em;
+    color: var(--ink-muted); text-decoration: underline; text-underline-offset: 3px;
+  }
+  .link-btn:hover{ color: var(--gold); }
+  .link-btn.danger:hover{ color: var(--rust); }
+  .goal.editing{
+    background: rgba(0,0,0,0.2); border: 1px dashed rgba(201,162,75,0.35);
+    border-radius: 5px; padding: 12px;
+  }
+  .goal.editing select, .goal.editing input{
+    width:100%; padding: 8px 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(201,162,75,0.3); border-radius: 3px; color: var(--ink);
+    font-family:'IBM Plex Sans',sans-serif; font-size: 13px;
+  }
+  .goal.editing .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
   form.goal-form{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; padding-top:18px; border-top: 1px dashed rgba(201,162,75,0.2); }
   form.goal-form .full{ grid-column: 1/-1; }
@@ -294,6 +312,7 @@
     <div class="stamp"><div class="label">Expenses (30d)</div><div class="value neg" id="stat-expense">...</div></div>
     <div class="stamp"><div class="label">Net (30d)</div><div class="value gold" id="stat-net">...</div></div>
     <div class="stamp"><div class="label">Savings rate</div><div class="value" id="stat-rate">...</div></div>
+    <div class="stamp"><div class="label">Unallocated funds</div><div class="value gold" id="stat-unallocated">...</div></div>
   </div>
 
   <div class="grid">
@@ -321,7 +340,7 @@
     <div>
       <section class="panel">
         <h2>Private wealth, investments &amp; savings</h2>
-        <div class="hint">What we're building, sorted by kind, and how close we are.</div>
+        <div class="hint">What we're building, sorted by kind, and how close we are. Money you haven't put toward a goal shows up as "Unallocated funds" above, it moves automatically as you edit the amounts here.</div>
         <div id="goals-list">
           <div class="empty" style="color:var(--ink-muted)">No goals yet.</div>
         </div>
@@ -360,6 +379,10 @@ const sb = (!SUPABASE_URL.startsWith("YOUR_"))
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => '$' + Number(n || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
+let allTransactions = [];
+let allGoals = [];
+let editingGoalId = null;
+
 function showApp(user){
   $('cover').style.display = 'none';
   $('app').style.display = 'block';
@@ -397,10 +420,12 @@ $('logout')?.addEventListener('click', async () => {
 
 // ---------- Transactions ----------
 async function loadTransactions(){
-  const { data, error } = await sb.from('transactions').select('*').order('occurred_on', { ascending: false }).limit(50);
+  const { data, error } = await sb.from('transactions').select('*').order('occurred_on', { ascending: false });
   if (error) { console.error(error); return; }
-  renderLedger(data || []);
-  renderStats(data || []);
+  allTransactions = data || [];
+  renderLedger(allTransactions.slice(0, 50));
+  renderStats(allTransactions);
+  updateUnallocated();
 }
 
 function renderLedger(rows){
@@ -453,7 +478,19 @@ $('entry-form')?.addEventListener('submit', async (e) => {
 async function loadGoals(){
   const { data, error } = await sb.from('goals').select('*').order('created_at', { ascending: true });
   if (error) { console.error(error); return; }
-  renderGoals(data || []);
+  allGoals = data || [];
+  renderGoals(allGoals);
+  updateUnallocated();
+}
+
+function updateUnallocated(){
+  const income = allTransactions.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
+  const expense = allTransactions.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
+  const allocated = allGoals.reduce((s,g) => s + Number(g.current_amount || 0), 0);
+  const unallocated = income - expense - allocated;
+  const el = $('stat-unallocated');
+  el.textContent = (unallocated >= 0 ? '' : '-') + fmt(Math.abs(unallocated));
+  el.className = 'value ' + (unallocated < 0 ? 'neg' : 'gold');
 }
 
 function renderGoals(rows){
@@ -471,21 +508,85 @@ function renderGoals(rows){
   el.innerHTML = order.map(cat => {
     if (!groups[cat].length) return '';
     const items = groups[cat].map(g => {
+      if (g.id === editingGoalId) return goalEditFormHtml(g);
       const pct = g.target_amount > 0 ? Math.min(100, Math.round((g.current_amount / g.target_amount) * 100)) : 0;
       return `
-        <div class="goal">
+        <div class="goal" data-id="${g.id}">
           <div class="goal-top">
             <span class="goal-title">${escapeHtml(g.title)}</span>
             <span class="goal-nums">${fmt(g.current_amount)} / ${fmt(g.target_amount)}</span>
           </div>
           <div class="thermo"><div class="thermo-fill" style="width:${pct}%"></div></div>
           ${g.target_date ? `<div class="goal-date">Target: ${g.target_date}, ${pct}% there</div>` : `<div class="goal-date">${pct}% there</div>`}
+          <div class="goal-actions">
+            <button type="button" class="link-btn edit-goal" data-id="${g.id}">Edit</button>
+            <button type="button" class="link-btn danger delete-goal" data-id="${g.id}">Delete</button>
+          </div>
         </div>
       `;
     }).join('');
     return `<div class="goal-group"><div class="goal-group-title">${cat}</div>${items}</div>`;
   }).join('');
 }
+
+function goalEditFormHtml(g){
+  const opts = ['Private Wealth', 'Investments', 'Savings'].map(c =>
+    `<option value="${c}" ${g.category === c ? 'selected' : ''}>${c}</option>`).join('');
+  return `
+    <div class="goal editing" data-id="${g.id}">
+      <select class="edit-category">${opts}</select>
+      <input type="text" class="edit-title" value="${escapeHtml(g.title)}">
+      <div class="row2">
+        <input type="number" step="0.01" class="edit-target" value="${g.target_amount}" placeholder="Target">
+        <input type="number" step="0.01" class="edit-current" value="${g.current_amount}" placeholder="Saved so far">
+      </div>
+      <input type="date" class="edit-date" value="${g.target_date || ''}">
+      <div class="goal-actions">
+        <button type="button" class="link-btn save-goal" data-id="${g.id}">Save</button>
+        <button type="button" class="link-btn cancel-goal">Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+$('goals-list')?.addEventListener('click', async (e) => {
+  const editBtn = e.target.closest('.edit-goal');
+  const delBtn = e.target.closest('.delete-goal');
+  const saveBtn = e.target.closest('.save-goal');
+  const cancelBtn = e.target.closest('.cancel-goal');
+
+  if (editBtn) {
+    editingGoalId = editBtn.dataset.id;
+    renderGoals(allGoals);
+    return;
+  }
+  if (cancelBtn) {
+    editingGoalId = null;
+    renderGoals(allGoals);
+    return;
+  }
+  if (delBtn) {
+    if (!confirm('Delete this goal? This cannot be undone.')) return;
+    const { error } = await sb.from('goals').delete().eq('id', delBtn.dataset.id);
+    if (error) { alert('Could not delete: ' + error.message); return; }
+    loadGoals();
+    return;
+  }
+  if (saveBtn) {
+    const card = saveBtn.closest('.goal.editing');
+    const payload = {
+      category: card.querySelector('.edit-category').value,
+      title: card.querySelector('.edit-title').value.trim(),
+      target_amount: parseFloat(card.querySelector('.edit-target').value),
+      current_amount: parseFloat(card.querySelector('.edit-current').value || 0),
+      target_date: card.querySelector('.edit-date').value || null
+    };
+    const { error } = await sb.from('goals').update(payload).eq('id', saveBtn.dataset.id);
+    if (error) { alert('Could not save: ' + error.message); return; }
+    editingGoalId = null;
+    loadGoals();
+  }
+});
 
 $('goal-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
