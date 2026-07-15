@@ -172,13 +172,30 @@
     gap: 10px; padding: 10px 14px; border-bottom: 1px dashed var(--paper-line);
     font-size: 13.5px;
   }
-  .del-tx{
+  .row-actions{ display:flex; flex-direction:column; gap: 4px; align-items:flex-end; }
+  .row-link-btn{
     background:none; border:none; cursor:pointer; padding: 0;
     color: #8a806a; font-family:'IBM Plex Mono',monospace; font-size: 11px;
     text-decoration: underline; text-underline-offset: 3px;
   }
-  .del-tx:hover{ color: var(--rust); }
+  .row-link-btn:hover{ color: var(--gold-dim); }
+  .row-link-btn.danger:hover{ color: var(--rust); }
   .ledger-row:last-child{ border-bottom: none; }
+  .ledger-row.editing-row{
+    display:block; background: rgba(0,0,0,0.04);
+  }
+  .ledger-row.editing-row .edit-grid{
+    display:grid; grid-template-columns: 90px 1fr 1fr; gap: 8px;
+  }
+  .ledger-row.editing-row .full{ grid-column: 1 / -1; }
+  .ledger-row.editing-row select, .ledger-row.editing-row input{
+    width:100%; padding: 8px 10px; background: #fff;
+    border: 1px solid var(--paper-line); border-radius: 3px;
+    color: var(--ink-on-paper); font-family:'IBM Plex Sans',sans-serif; font-size: 13px;
+  }
+  .ledger-row.editing-row .row-actions{
+    flex-direction: row; justify-content: flex-end; margin-top: 8px; gap: 14px;
+  }
   .stamp-dot{
     width: 26px; height:26px; border-radius:50%;
     border: 1.5px solid var(--ink-on-paper); opacity: 0.55;
@@ -389,6 +406,7 @@ const fmt = (n) => '$' + Number(n || 0).toLocaleString(undefined, {minimumFracti
 let allTransactions = [];
 let allGoals = [];
 let editingGoalId = null;
+let editingTxId = null;
 
 function showApp(user){
   $('cover').style.display = 'none';
@@ -439,7 +457,9 @@ async function loadTransactions(){
 function renderLedger(rows){
   const el = $('ledger-list');
   if (!rows.length) { el.innerHTML = '<div class="empty">No entries yet. Add the first one below.</div>'; return; }
-  el.innerHTML = rows.map(r => `
+  el.innerHTML = rows.map(r => {
+    if (r.id === editingTxId) return txEditFormHtml(r);
+    return `
     <div class="ledger-row ${r.type}">
       <div class="stamp-dot">${r.type === 'income' ? '+' : '−'}</div>
       <div class="ledger-meta">
@@ -447,18 +467,73 @@ function renderLedger(rows){
         <span class="date">${r.occurred_on}</span>
       </div>
       <div class="ledger-amt ${r.type}">${r.type === 'income' ? '+' : '−'}${fmt(r.amount)}</div>
-      <button type="button" class="del-tx" data-id="${r.id}">Delete</button>
+      <div class="row-actions">
+        <button type="button" class="row-link-btn edit-tx" data-id="${r.id}">Edit</button>
+        <button type="button" class="row-link-btn danger del-tx" data-id="${r.id}">Delete</button>
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+}
+
+function txEditFormHtml(r){
+  return `
+    <div class="ledger-row editing-row" data-id="${r.id}">
+      <div class="edit-grid">
+        <select class="tx-edit-type">
+          <option value="expense" ${r.type === 'expense' ? 'selected' : ''}>Out</option>
+          <option value="income" ${r.type === 'income' ? 'selected' : ''}>In</option>
+        </select>
+        <input type="text" class="tx-edit-category full" value="${escapeHtml(r.category)}" placeholder="Category">
+        <input type="number" step="0.01" min="0" class="tx-edit-amount" value="${r.amount}" placeholder="Amount">
+        <input type="date" class="tx-edit-date" value="${r.occurred_on}">
+        <input type="text" class="tx-edit-note full" value="${r.note ? escapeHtml(r.note) : ''}" placeholder="Note (optional)">
+      </div>
+      <div class="row-actions">
+        <button type="button" class="row-link-btn save-tx" data-id="${r.id}">Save</button>
+        <button type="button" class="row-link-btn cancel-tx">Cancel</button>
+      </div>
+    </div>
+  `;
 }
 
 $('ledger-list')?.addEventListener('click', async (e) => {
+  const editBtn = e.target.closest('.edit-tx');
   const delBtn = e.target.closest('.del-tx');
-  if (!delBtn) return;
-  if (!confirm('Delete this entry? This cannot be undone.')) return;
-  const { error } = await sb.from('transactions').delete().eq('id', delBtn.dataset.id);
-  if (error) { alert('Could not delete: ' + error.message); return; }
-  loadTransactions();
+  const saveBtn = e.target.closest('.save-tx');
+  const cancelBtn = e.target.closest('.cancel-tx');
+
+  if (editBtn) {
+    editingTxId = editBtn.dataset.id;
+    renderLedger(allTransactions.slice(0, 50));
+    return;
+  }
+  if (cancelBtn) {
+    editingTxId = null;
+    renderLedger(allTransactions.slice(0, 50));
+    return;
+  }
+  if (delBtn) {
+    if (!confirm('Delete this entry? This cannot be undone.')) return;
+    const { error } = await sb.from('transactions').delete().eq('id', delBtn.dataset.id);
+    if (error) { alert('Could not delete: ' + error.message); return; }
+    loadTransactions();
+    return;
+  }
+  if (saveBtn) {
+    const card = saveBtn.closest('.ledger-row.editing-row');
+    const payload = {
+      type: card.querySelector('.tx-edit-type').value,
+      category: card.querySelector('.tx-edit-category').value.trim(),
+      amount: parseFloat(card.querySelector('.tx-edit-amount').value),
+      occurred_on: card.querySelector('.tx-edit-date').value,
+      note: card.querySelector('.tx-edit-note').value.trim() || null
+    };
+    const { error } = await sb.from('transactions').update(payload).eq('id', saveBtn.dataset.id);
+    if (error) { alert('Could not save: ' + error.message); return; }
+    editingTxId = null;
+    loadTransactions();
+  }
 });
 
 function renderStats(rows){
