@@ -391,9 +391,9 @@
 
   <div id="view-dashboard" class="view">
   <div class="stamp-row">
-    <div class="stamp"><div class="label">Income (30d)</div><div class="value pos" id="stat-income">...</div></div>
-    <div class="stamp"><div class="label">Expenses (30d)</div><div class="value neg" id="stat-expense">...</div></div>
-    <div class="stamp"><div class="label">Net (30d)</div><div class="value gold" id="stat-net">...</div></div>
+    <div class="stamp"><div class="label">Income (this cycle)</div><div class="value pos" id="stat-income">...</div></div>
+    <div class="stamp"><div class="label">Expenses (this cycle)</div><div class="value neg" id="stat-expense">...</div></div>
+    <div class="stamp"><div class="label">Net (this cycle)</div><div class="value gold" id="stat-net">...</div></div>
     <div class="stamp"><div class="label">Savings rate</div><div class="value" id="stat-rate">...</div></div>
     <div class="stamp"><div class="label">Current balance</div><div class="value gold" id="stat-balance">...</div></div>
   </div>
@@ -402,7 +402,7 @@
     <div>
       <section class="panel">
         <h2>Running ledger</h2>
-        <div class="hint">Every entry, stamped as it lands.</div>
+        <div class="hint">Every entry since payday. Resets each cycle, <span id="cycle-label" style="color:var(--gold)"></span>, older entries live in the Monthly tab.</div>
         <div class="ledger-paper" id="ledger-list">
           <div class="empty">No entries yet. Add the first one below.</div>
         </div>
@@ -461,16 +461,16 @@
 
   <div id="view-monthly" class="view" style="display:none">
     <section class="panel">
-      <h2>All months at a glance</h2>
-      <div class="hint">Income, expenses and net, month by month, built straight from the ledger.</div>
+      <h2>All cycles at a glance</h2>
+      <div class="hint">Income, expenses and net, one pay cycle at a time (25th to 24th), built straight from the ledger.</div>
       <div id="monthly-list">
         <div class="empty" style="color:var(--ink-muted)">Not enough data yet.</div>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Movements for a month</h2>
-      <div class="hint">Pick a month to see every entry that happened in it. To edit or delete an entry, do it from the Dashboard's Running Ledger.</div>
+      <h2>Movements for a cycle</h2>
+      <div class="hint">Pick a pay cycle to see every entry in it. To edit or delete an entry, do it from the Dashboard's Running Ledger.</div>
       <select id="month-select" class="full" style="margin-bottom:16px;"></select>
       <div class="stamp-row" id="month-stats" style="margin-bottom:20px;"></div>
       <div class="ledger-paper" id="month-detail-list">
@@ -568,8 +568,12 @@ async function loadTransactions(){
   const { data, error } = await sb.from('transactions').select('*').order('occurred_on', { ascending: false }).order('created_at', { ascending: false });
   if (error) { console.error(error); return; }
   allTransactions = data || [];
-  renderLedger(allTransactions.slice(0, 50));
-  renderStats(allTransactions);
+  const cycleKey = currentCycleKey();
+  const cycleRows = allTransactions.filter(r => cycleKeyForDate(r.occurred_on) === cycleKey);
+  const label = $('cycle-label');
+  if (label) label.textContent = cycleLabel(cycleKey);
+  renderLedger(cycleRows);
+  renderStats(cycleRows);
   renderMonthly(allTransactions);
   populateMonthSelect();
   updateBalance();
@@ -627,12 +631,12 @@ $('ledger-list')?.addEventListener('click', async (e) => {
 
   if (editBtn) {
     editingTxId = editBtn.dataset.id;
-    renderLedger(allTransactions.slice(0, 50));
+    renderLedger(currentCycleRows());
     return;
   }
   if (cancelBtn) {
     editingTxId = null;
-    renderLedger(allTransactions.slice(0, 50));
+    renderLedger(currentCycleRows());
     return;
   }
   if (delBtn) {
@@ -661,25 +665,51 @@ $('ledger-list')?.addEventListener('click', async (e) => {
 
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+// Bob's pay cycle runs 25th to 24th. A date before the 25th belongs to
+// the cycle that started on the 25th of the PREVIOUS month.
+function cycleKeyForDate(dateStr){
+  const [yy, mm, dd] = dateStr.split('-').map(Number);
+  let y = yy, m = mm;
+  if (dd < 25) {
+    m -= 1;
+    if (m < 1) { m = 12; y -= 1; }
+  }
+  return `${y}-${String(m).padStart(2, '0')}`;
+}
+function cycleLabel(key){
+  const [y, m] = key.split('-').map(Number);
+  let endM = m + 1, endY = y;
+  if (endM > 12) { endM = 1; endY += 1; }
+  return `${MONTH_NAMES[m - 1].slice(0,3)} 25 – ${MONTH_NAMES[endM - 1].slice(0,3)} 24, ${endY}`;
+}
+function currentCycleKey(){
+  const today = new Date();
+  const iso = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  return cycleKeyForDate(iso);
+}
+function currentCycleRows(){
+  const key = currentCycleKey();
+  return allTransactions.filter(r => cycleKeyForDate(r.occurred_on) === key);
+}
+
 function renderMonthly(rows){
   const el = $('monthly-list');
   if (!rows.length) { el.innerHTML = '<div class="empty" style="color:var(--ink-muted)">Not enough data yet.</div>'; return; }
 
-  const months = {};
+  const cycles = {};
   rows.forEach(r => {
-    const key = r.occurred_on.slice(0, 7); // YYYY-MM
-    if (!months[key]) months[key] = { income: 0, expense: 0 };
-    months[key][r.type] += Number(r.amount);
+    const key = cycleKeyForDate(r.occurred_on);
+    if (!cycles[key]) cycles[key] = { income: 0, expense: 0 };
+    cycles[key][r.type] += Number(r.amount);
   });
 
-  const keys = Object.keys(months).sort().reverse();
-  const maxVal = Math.max(1, ...keys.map(k => Math.max(months[k].income, months[k].expense)));
+  const keys = Object.keys(cycles).sort().reverse();
+  const maxVal = Math.max(1, ...keys.map(k => Math.max(cycles[k].income, cycles[k].expense)));
 
   el.innerHTML = keys.map(k => {
-    const { income, expense } = months[k];
+    const { income, expense } = cycles[k];
     const net = income - expense;
-    const [y, m] = k.split('-');
-    const label = MONTH_NAMES[parseInt(m, 10) - 1] + ' ' + y;
+    const label = cycleLabel(k);
     const incomePct = Math.round((income / maxVal) * 100);
     const expensePct = Math.round((expense / maxVal) * 100);
     return `
@@ -706,13 +736,11 @@ function renderMonthly(rows){
 function populateMonthSelect(){
   const sel = $('month-select');
   if (!sel) return;
-  const keys = [...new Set(allTransactions.map(r => r.occurred_on.slice(0, 7)))].sort().reverse();
+  const keys = [...new Set(allTransactions.map(r => cycleKeyForDate(r.occurred_on)))].sort().reverse();
   if (!keys.length) { sel.innerHTML = '<option>No data yet</option>'; return; }
   if (!selectedMonth || !keys.includes(selectedMonth)) selectedMonth = keys[0];
   sel.innerHTML = keys.map(k => {
-    const [y, m] = k.split('-');
-    const label = MONTH_NAMES[parseInt(m, 10) - 1] + ' ' + y;
-    return `<option value="${k}" ${k === selectedMonth ? 'selected' : ''}>${label}</option>`;
+    return `<option value="${k}" ${k === selectedMonth ? 'selected' : ''}>${cycleLabel(k)}</option>`;
   }).join('');
   renderMonthDetail();
 }
@@ -724,7 +752,7 @@ $('month-select')?.addEventListener('change', (e) => {
 
 function renderMonthDetail(){
   if (!selectedMonth) return;
-  const rows = allTransactions.filter(r => r.occurred_on.slice(0, 7) === selectedMonth);
+  const rows = allTransactions.filter(r => cycleKeyForDate(r.occurred_on) === selectedMonth);
   const income = rows.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
   const expense = rows.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
   const net = income - expense;
@@ -750,10 +778,8 @@ function renderMonthDetail(){
 }
 
 function renderStats(rows){
-  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
-  const recent = rows.filter(r => new Date(r.occurred_on) >= cutoff);
-  const income = recent.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
-  const expense = recent.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
+  const income = rows.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
+  const expense = rows.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
   const net = income - expense;
   const rate = income > 0 ? Math.round((net / income) * 100) : 0;
   $('stat-income').textContent = fmt(income);
