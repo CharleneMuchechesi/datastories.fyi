@@ -246,6 +246,7 @@
     border: 1px solid rgba(201,162,75,0.2);
   }
   .thermo-fill{ height:100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+  .thermo-fill.debt{ background: linear-gradient(90deg, #7a2f20, var(--rust)); }
   .goal-date{ font-size:11px; color: var(--ink-muted); margin-top: 6px; font-family:'IBM Plex Mono',monospace; }
   .goal-actions{ margin-top: 8px; display:flex; gap: 14px; }
   .link-btn{
@@ -279,6 +280,56 @@
   }
   form.goal-form button:hover{ background: rgba(201,162,75,0.1); }
 
+  /* Monthly overview */
+  .month-row{ padding: 14px 0; border-bottom: 1px dashed rgba(201,162,75,0.15); }
+  .month-row:last-child{ border-bottom: none; }
+  .month-label{
+    font-family:'IBM Plex Mono',monospace; font-size: 12px; color: var(--gold);
+    letter-spacing: 0.06em; margin-bottom: 10px; text-transform: uppercase;
+  }
+  .month-bars{ display:flex; flex-direction:column; gap: 6px; }
+  .month-bar-row{ display:grid; grid-template-columns: 34px 1fr 90px; align-items:center; gap: 10px; font-size: 12px; color: var(--ink-muted); }
+  .month-bar-track{ height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow:hidden; }
+  .month-bar-fill{ height:100%; }
+  .month-bar-fill.income{ background: var(--green-pos); }
+  .month-bar-fill.expense{ background: var(--rust); }
+  .month-net{ text-align:right; font-family:'IBM Plex Mono',monospace; font-size: 12px; margin-top: 4px; }
+
+  #main-nav{
+    display:flex; gap: 4px; margin-bottom: 28px; border-bottom: 1px solid rgba(201,162,75,0.18);
+  }
+  .nav-tab{
+    background:none; border:none; color: var(--ink-muted); font-family:'IBM Plex Sans',sans-serif;
+    font-size: 13px; font-weight: 600; padding: 10px 16px; cursor:pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .nav-tab:hover{ color: var(--ink); }
+  .nav-tab.active{ color: var(--gold); border-bottom-color: var(--gold); }
+  .view{ }
+
+  select.full{
+    padding: 10px 12px; background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(201,162,75,0.3); border-radius: 3px;
+    color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; font-size: 13px;
+  }
+
+  .import-row{
+    background: var(--paper); color: var(--ink-on-paper); border-radius: 4px;
+    padding: 12px 14px; margin-bottom: 8px; display:grid;
+    grid-template-columns: 20px 1fr auto; align-items:center; gap: 12px; font-size: 13px;
+  }
+  .import-row.dup{ opacity: 0.55; }
+  .import-row .imp-meta{ display:flex; flex-direction:column; gap:2px; }
+  .import-row .imp-cat{ font-weight:600; }
+  .import-row .imp-date{ font-size: 11px; opacity: 0.65; font-family:'IBM Plex Mono',monospace; }
+  .import-row .imp-amt{ font-family:'IBM Plex Mono',monospace; font-weight:600; white-space:nowrap; }
+  .import-row .imp-amt.income{ color:#2f6b47; }
+  .import-row .imp-amt.expense{ color:#8a3b28; }
+  .import-unmatched{
+    background: rgba(176,80,58,0.1); border: 1px dashed var(--rust); border-radius: 4px;
+    padding: 10px 14px; margin-bottom: 8px; font-size: 12px; font-family:'IBM Plex Mono',monospace;
+    color: var(--ink-muted);
+  }
   #config-warning{
     display:none; max-width: 560px; margin: 60px auto; padding: 24px;
     background: var(--surface); border: 1px solid var(--rust); border-radius: 6px;
@@ -332,12 +383,19 @@
     </div>
   </header>
 
+  <nav id="main-nav">
+    <button type="button" class="nav-tab active" data-view="dashboard">Dashboard</button>
+    <button type="button" class="nav-tab" data-view="monthly">Monthly</button>
+    <button type="button" class="nav-tab" data-view="import">Import messages</button>
+  </nav>
+
+  <div id="view-dashboard" class="view">
   <div class="stamp-row">
     <div class="stamp"><div class="label">Income (30d)</div><div class="value pos" id="stat-income">...</div></div>
     <div class="stamp"><div class="label">Expenses (30d)</div><div class="value neg" id="stat-expense">...</div></div>
     <div class="stamp"><div class="label">Net (30d)</div><div class="value gold" id="stat-net">...</div></div>
     <div class="stamp"><div class="label">Savings rate</div><div class="value" id="stat-rate">...</div></div>
-    <div class="stamp"><div class="label">Unallocated funds</div><div class="value gold" id="stat-unallocated">...</div></div>
+    <div class="stamp"><div class="label">Current balance</div><div class="value gold" id="stat-balance">...</div></div>
   </div>
 
   <div class="grid">
@@ -356,6 +414,7 @@
           <input type="text" id="e-category" placeholder="Category (e.g. Rent, Salary)" required>
           <input type="number" step="0.01" min="0" id="e-amount" class="money-in" placeholder="Amount" required>
           <input type="date" id="e-date" class="full">
+          <input type="number" step="0.01" id="e-balance" class="money-in full" placeholder="Balance after (optional)">
           <input type="text" id="e-note" class="full" placeholder="Note (optional)">
           <button type="submit">Add entry</button>
         </form>
@@ -381,8 +440,55 @@
           <button type="submit">Add goal</button>
         </form>
       </section>
+
+      <section class="panel">
+        <h2>Debts</h2>
+        <div class="hint">What's still owed, and how much of it has been paid down.</div>
+        <div id="debts-list">
+          <div class="empty" style="color:var(--ink-muted)">No debts logged.</div>
+        </div>
+        <form class="goal-form" id="debt-form">
+          <input type="text" id="d-title" class="full" placeholder="Debt (e.g. Personal loan)" required>
+          <input type="number" step="0.01" min="0" id="d-total" placeholder="Total owed" required>
+          <input type="number" step="0.01" min="0" id="d-remaining" placeholder="Still owed">
+          <input type="date" id="d-date" class="full" placeholder="Due date (optional)">
+          <button type="submit">Add debt</button>
+        </form>
+      </section>
     </div>
   </div>
+  </div> <!-- /view-dashboard -->
+
+  <div id="view-monthly" class="view" style="display:none">
+    <section class="panel">
+      <h2>All months at a glance</h2>
+      <div class="hint">Income, expenses and net, month by month, built straight from the ledger.</div>
+      <div id="monthly-list">
+        <div class="empty" style="color:var(--ink-muted)">Not enough data yet.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Movements for a month</h2>
+      <div class="hint">Pick a month to see every entry that happened in it. To edit or delete an entry, do it from the Dashboard's Running Ledger.</div>
+      <select id="month-select" class="full" style="margin-bottom:16px;"></select>
+      <div class="stamp-row" id="month-stats" style="margin-bottom:20px;"></div>
+      <div class="ledger-paper" id="month-detail-list">
+        <div class="empty">Nothing logged for this month yet.</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="view-import" class="view" style="display:none">
+    <section class="panel">
+      <h2>Import bank / EcoCash messages</h2>
+      <div class="hint">Paste in one or more SMS alerts, from EcoCash or the bank, exactly as you received them. I'll pull out the date, amount and balance automatically.</div>
+      <textarea id="import-text" placeholder="Paste messages here, one after another..." style="width:100%; min-height:160px; padding:12px 14px; background:rgba(0,0,0,0.25); border:1px solid rgba(201,162,75,0.3); border-radius:3px; color:var(--ink); font-family:'IBM Plex Mono',monospace; font-size:13px;"></textarea>
+      <button type="button" class="btn-gold" id="parse-btn" style="width:auto; padding:12px 24px; margin-top:12px;">Parse messages</button>
+      <div id="import-results" style="margin-top:24px;"></div>
+    </section>
+  </div>
+
 </div>
 
 <script>
@@ -405,8 +511,11 @@ const fmt = (n) => '$' + Number(n || 0).toLocaleString(undefined, {minimumFracti
 
 let allTransactions = [];
 let allGoals = [];
+let allDebts = [];
 let editingGoalId = null;
 let editingTxId = null;
+let editingDebtId = null;
+let selectedMonth = null;
 
 function showApp(user){
   $('cover').style.display = 'none';
@@ -414,12 +523,22 @@ function showApp(user){
   $('who').textContent = user.email;
   loadTransactions();
   loadGoals();
+  loadDebts();
 }
 
 function showCover(){
   $('app').style.display = 'none';
   $('cover').style.display = 'flex';
 }
+
+document.querySelectorAll('.nav-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+    btn.classList.add('active');
+    $('view-' + btn.dataset.view).style.display = 'block';
+  });
+});
 
 async function checkSession(){
   if (!sb) return;
@@ -446,12 +565,14 @@ $('logout')?.addEventListener('click', async () => {
 
 // ---------- Transactions ----------
 async function loadTransactions(){
-  const { data, error } = await sb.from('transactions').select('*').order('occurred_on', { ascending: false });
+  const { data, error } = await sb.from('transactions').select('*').order('occurred_on', { ascending: false }).order('created_at', { ascending: false });
   if (error) { console.error(error); return; }
   allTransactions = data || [];
   renderLedger(allTransactions.slice(0, 50));
   renderStats(allTransactions);
-  updateUnallocated();
+  renderMonthly(allTransactions);
+  populateMonthSelect();
+  updateBalance();
 }
 
 function renderLedger(rows){
@@ -464,7 +585,7 @@ function renderLedger(rows){
       <div class="stamp-dot">${r.type === 'income' ? '+' : '−'}</div>
       <div class="ledger-meta">
         <span class="cat">${escapeHtml(r.category)}${r.note ? ' · ' + escapeHtml(r.note) : ''}</span>
-        <span class="date">${r.occurred_on}</span>
+        <span class="date">${r.occurred_on}${(r.balance !== null && r.balance !== undefined) ? ' · bal ' + fmt(r.balance) : ''}</span>
       </div>
       <div class="ledger-amt ${r.type}">${r.type === 'income' ? '+' : '−'}${fmt(r.amount)}</div>
       <div class="row-actions">
@@ -487,6 +608,7 @@ function txEditFormHtml(r){
         <input type="text" class="tx-edit-category full" value="${escapeHtml(r.category)}" placeholder="Category">
         <input type="number" step="0.01" min="0" class="tx-edit-amount" value="${r.amount}" placeholder="Amount">
         <input type="date" class="tx-edit-date" value="${r.occurred_on}">
+        <input type="number" step="0.01" class="tx-edit-balance" value="${r.balance !== null && r.balance !== undefined ? r.balance : ''}" placeholder="Balance after (optional)">
         <input type="text" class="tx-edit-note full" value="${r.note ? escapeHtml(r.note) : ''}" placeholder="Note (optional)">
       </div>
       <div class="row-actions">
@@ -527,7 +649,8 @@ $('ledger-list')?.addEventListener('click', async (e) => {
       category: card.querySelector('.tx-edit-category').value.trim(),
       amount: parseFloat(card.querySelector('.tx-edit-amount').value),
       occurred_on: card.querySelector('.tx-edit-date').value,
-      note: card.querySelector('.tx-edit-note').value.trim() || null
+      note: card.querySelector('.tx-edit-note').value.trim() || null,
+      balance: card.querySelector('.tx-edit-balance').value !== '' ? parseFloat(card.querySelector('.tx-edit-balance').value) : null
     };
     const { error } = await sb.from('transactions').update(payload).eq('id', saveBtn.dataset.id);
     if (error) { alert('Could not save: ' + error.message); return; }
@@ -535,6 +658,96 @@ $('ledger-list')?.addEventListener('click', async (e) => {
     loadTransactions();
   }
 });
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function renderMonthly(rows){
+  const el = $('monthly-list');
+  if (!rows.length) { el.innerHTML = '<div class="empty" style="color:var(--ink-muted)">Not enough data yet.</div>'; return; }
+
+  const months = {};
+  rows.forEach(r => {
+    const key = r.occurred_on.slice(0, 7); // YYYY-MM
+    if (!months[key]) months[key] = { income: 0, expense: 0 };
+    months[key][r.type] += Number(r.amount);
+  });
+
+  const keys = Object.keys(months).sort().reverse();
+  const maxVal = Math.max(1, ...keys.map(k => Math.max(months[k].income, months[k].expense)));
+
+  el.innerHTML = keys.map(k => {
+    const { income, expense } = months[k];
+    const net = income - expense;
+    const [y, m] = k.split('-');
+    const label = MONTH_NAMES[parseInt(m, 10) - 1] + ' ' + y;
+    const incomePct = Math.round((income / maxVal) * 100);
+    const expensePct = Math.round((expense / maxVal) * 100);
+    return `
+      <div class="month-row">
+        <div class="month-label">${label}</div>
+        <div class="month-bars">
+          <div class="month-bar-row">
+            <span>In</span>
+            <div class="month-bar-track"><div class="month-bar-fill income" style="width:${incomePct}%"></div></div>
+            <span class="money">${fmt(income)}</span>
+          </div>
+          <div class="month-bar-row">
+            <span>Out</span>
+            <div class="month-bar-track"><div class="month-bar-fill expense" style="width:${expensePct}%"></div></div>
+            <span class="money">${fmt(expense)}</span>
+          </div>
+        </div>
+        <div class="month-net" style="color:${net >= 0 ? 'var(--green-pos)' : 'var(--rust)'}">${net >= 0 ? '+' : ''}${fmt(net)} net</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function populateMonthSelect(){
+  const sel = $('month-select');
+  if (!sel) return;
+  const keys = [...new Set(allTransactions.map(r => r.occurred_on.slice(0, 7)))].sort().reverse();
+  if (!keys.length) { sel.innerHTML = '<option>No data yet</option>'; return; }
+  if (!selectedMonth || !keys.includes(selectedMonth)) selectedMonth = keys[0];
+  sel.innerHTML = keys.map(k => {
+    const [y, m] = k.split('-');
+    const label = MONTH_NAMES[parseInt(m, 10) - 1] + ' ' + y;
+    return `<option value="${k}" ${k === selectedMonth ? 'selected' : ''}>${label}</option>`;
+  }).join('');
+  renderMonthDetail();
+}
+
+$('month-select')?.addEventListener('change', (e) => {
+  selectedMonth = e.target.value;
+  renderMonthDetail();
+});
+
+function renderMonthDetail(){
+  if (!selectedMonth) return;
+  const rows = allTransactions.filter(r => r.occurred_on.slice(0, 7) === selectedMonth);
+  const income = rows.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
+  const expense = rows.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
+  const net = income - expense;
+
+  $('month-stats').innerHTML = `
+    <div class="stamp"><div class="label">In</div><div class="value pos">${fmt(income)}</div></div>
+    <div class="stamp"><div class="label">Out</div><div class="value neg">${fmt(expense)}</div></div>
+    <div class="stamp"><div class="label">Net</div><div class="value ${net >= 0 ? 'pos' : 'neg'}">${net >= 0 ? '+' : ''}${fmt(net)}</div></div>
+  `;
+
+  const el = $('month-detail-list');
+  if (!rows.length) { el.innerHTML = '<div class="empty">Nothing logged for this month yet.</div>'; return; }
+  el.innerHTML = rows.map(r => `
+    <div class="ledger-row ${r.type}">
+      <div class="stamp-dot">${r.type === 'income' ? '+' : '−'}</div>
+      <div class="ledger-meta">
+        <span class="cat">${escapeHtml(r.category)}${r.note ? ' · ' + escapeHtml(r.note) : ''}</span>
+        <span class="date">${r.occurred_on}${(r.balance !== null && r.balance !== undefined) ? ' · bal ' + fmt(r.balance) : ''}</span>
+      </div>
+      <div class="ledger-amt ${r.type}">${r.type === 'income' ? '+' : '−'}${fmt(r.amount)}</div>
+    </div>
+  `).join('');
+}
 
 function renderStats(rows){
   const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
@@ -559,6 +772,7 @@ $('entry-form')?.addEventListener('submit', async (e) => {
     amount: parseFloat($('e-amount').value),
     occurred_on: $('e-date').value || new Date().toISOString().slice(0,10),
     note: $('e-note').value.trim() || null,
+    balance: $('e-balance').value !== '' ? parseFloat($('e-balance').value) : null,
     created_by: user.id
   };
   const { error } = await sb.from('transactions').insert(payload);
@@ -573,15 +787,21 @@ async function loadGoals(){
   if (error) { console.error(error); return; }
   allGoals = data || [];
   renderGoals(allGoals);
-  updateUnallocated();
 }
 
-function updateUnallocated(){
+function updateBalance(){
+  const withBalance = allTransactions.find(r => r.balance !== null && r.balance !== undefined);
+  const el = $('stat-balance');
+  if (withBalance) {
+    el.textContent = fmt(withBalance.balance);
+    el.className = 'value ' + (Number(withBalance.balance) < 0 ? 'neg' : 'gold');
+    return;
+  }
+  // No bank-reported balance logged yet, fall back to income minus expenses
   const income = allTransactions.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
   const expense = allTransactions.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
   const net = income - expense;
-  const el = $('stat-unallocated');
-  el.textContent = (net >= 0 ? '' : '-') + fmt(Math.abs(net));
+  el.textContent = fmt(net);
   el.className = 'value ' + (net < 0 ? 'neg' : 'gold');
 }
 
@@ -696,6 +916,262 @@ $('goal-form')?.addEventListener('submit', async (e) => {
   e.target.reset();
   loadGoals();
 });
+
+// ---------- Debts ----------
+async function loadDebts(){
+  const { data, error } = await sb.from('debts').select('*').order('created_at', { ascending: true });
+  if (error) { console.error(error); return; }
+  allDebts = data || [];
+  renderDebts(allDebts);
+}
+
+function renderDebts(rows){
+  const el = $('debts-list');
+  if (!rows.length) { el.innerHTML = '<div class="empty" style="color:var(--ink-muted)">No debts logged.</div>'; return; }
+  el.innerHTML = rows.map(d => {
+    if (d.id === editingDebtId) return debtEditFormHtml(d);
+    const pct = d.total_amount > 0 ? Math.min(100, Math.round(((d.total_amount - d.remaining_amount) / d.total_amount) * 100)) : 0;
+    return `
+      <div class="goal" data-id="${d.id}">
+        <div class="goal-top">
+          <span class="goal-title">${escapeHtml(d.title)}</span>
+          <span class="goal-nums">${fmt(d.remaining_amount)} left / ${fmt(d.total_amount)}</span>
+        </div>
+        <div class="thermo"><div class="thermo-fill debt" style="width:${pct}%"></div></div>
+        ${d.due_date ? `<div class="goal-date">Due: ${d.due_date}, ${pct}% paid down</div>` : `<div class="goal-date">${pct}% paid down</div>`}
+        <div class="goal-actions">
+          <button type="button" class="link-btn edit-debt" data-id="${d.id}">Edit</button>
+          <button type="button" class="link-btn danger delete-debt" data-id="${d.id}">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function debtEditFormHtml(d){
+  return `
+    <div class="goal editing" data-id="${d.id}">
+      <input type="text" class="edit-title" value="${escapeHtml(d.title)}">
+      <div class="row2">
+        <input type="number" step="0.01" class="edit-total" value="${d.total_amount}" placeholder="Total owed">
+        <input type="number" step="0.01" class="edit-remaining" value="${d.remaining_amount}" placeholder="Still owed">
+      </div>
+      <input type="date" class="edit-date" value="${d.due_date || ''}">
+      <div class="goal-actions">
+        <button type="button" class="link-btn save-debt" data-id="${d.id}">Save</button>
+        <button type="button" class="link-btn cancel-debt">Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+$('debts-list')?.addEventListener('click', async (e) => {
+  const editBtn = e.target.closest('.edit-debt');
+  const delBtn = e.target.closest('.delete-debt');
+  const saveBtn = e.target.closest('.save-debt');
+  const cancelBtn = e.target.closest('.cancel-debt');
+
+  if (editBtn) {
+    editingDebtId = editBtn.dataset.id;
+    renderDebts(allDebts);
+    return;
+  }
+  if (cancelBtn) {
+    editingDebtId = null;
+    renderDebts(allDebts);
+    return;
+  }
+  if (delBtn) {
+    if (!confirm('Delete this debt? This cannot be undone.')) return;
+    const { error } = await sb.from('debts').delete().eq('id', delBtn.dataset.id);
+    if (error) { alert('Could not delete: ' + error.message); return; }
+    loadDebts();
+    return;
+  }
+  if (saveBtn) {
+    const card = saveBtn.closest('.goal.editing');
+    const payload = {
+      title: card.querySelector('.edit-title').value.trim(),
+      total_amount: parseFloat(card.querySelector('.edit-total').value),
+      remaining_amount: parseFloat(card.querySelector('.edit-remaining').value || 0),
+      due_date: card.querySelector('.edit-date').value || null
+    };
+    const { error } = await sb.from('debts').update(payload).eq('id', saveBtn.dataset.id);
+    if (error) { alert('Could not save: ' + error.message); return; }
+    editingDebtId = null;
+    loadDebts();
+  }
+});
+
+$('debt-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const { data: { user } } = await sb.auth.getUser();
+  const total = parseFloat($('d-total').value);
+  const remainingRaw = $('d-remaining').value;
+  const payload = {
+    title: $('d-title').value.trim(),
+    total_amount: total,
+    remaining_amount: remainingRaw !== '' ? parseFloat(remainingRaw) : total,
+    due_date: $('d-date').value || null,
+    created_by: user.id
+  };
+  const { error } = await sb.from('debts').insert(payload);
+  if (error) { alert('Could not save debt: ' + error.message); return; }
+  e.target.reset();
+  loadDebts();
+});
+
+// ---------- Import messages ----------
+function parseOneMessage(msg){
+  msg = msg.trim();
+
+  function fromApprovalCode(code){
+    const m = code.match(/^[A-Z]{2}(\d{2})(\d{2})(\d{2})\.(\d{2})(\d{2})\./);
+    if (!m) return null;
+    const [, yy, mm, dd, hh, mi] = m;
+    return { occurred_on: `20${yy}-${mm}-${dd}`, created_at: `20${yy}-${mm}-${dd} ${hh}:${mi}:00` };
+  }
+  const num = (s) => parseFloat(String(s).replace(/,/g, ''));
+
+  let m;
+
+  // Bank to Wallet
+  m = msg.match(/Transfer Confirmation:\s*Bank to Wallet of USD\s*([\d,.]+)\s*from\s*(.+?)\s*successful\.\s*Approval Code:\s*(\S+)\.\s*New balance:\s*USD\s*([\d,.]+)/i);
+  if (m) {
+    const when = fromApprovalCode(m[3]);
+    if (when) return { type: 'income', category: 'Bank to Wallet (' + m[2].trim() + ')', note: null, amount: num(m[1]), balance: num(m[4]), ...when, raw: msg };
+  }
+
+  // ZIPIT Receive
+  m = msg.match(/Transfer Confirmation\.?\s*USD\s*([\d,.]+)\s*ZIPIT Receive\.\s*Approval Code:\s*(\S+)\.\s*New (?:wallet )?balance:\s*USD\s*([\d,.]+)/i);
+  if (m) {
+    const when = fromApprovalCode(m[2]);
+    if (when) return { type: 'income', category: 'ZIPIT Receive', note: null, amount: num(m[1]), balance: num(m[3]), ...when, raw: msg };
+  }
+
+  // EcoCash Payment Confirmation (paid to merchant)
+  m = msg.match(/Payment Confirmation:\s*USD\s*([\d,.]+)\s*paid to\s*(\d+)\s*-\s*(.+?)\.\s*Approval Code:\s*(\S+)\.\s*New balance:\s*USD\s*([\d,.]+)/i);
+  if (m) {
+    const when = fromApprovalCode(m[4]);
+    if (when) return { type: 'expense', category: m[3].trim(), note: null, amount: num(m[1]), balance: num(m[5]), ...when, raw: msg };
+  }
+
+  // EcoCash Transfer sent to
+  m = msg.match(/Transfer Confirmation:\s*USD\s*([\d,.]+)\s*sent to\s*(.+?)\.\s*Approval Code:\s*(\S+)\.\s*New balance:\s*USD\s*([\d,.]+)/i);
+  if (m) {
+    const when = fromApprovalCode(m[3]);
+    if (when) return { type: 'expense', category: m[2].trim(), note: null, amount: num(m[1]), balance: num(m[4]), ...when, raw: msg };
+  }
+
+  // EcoCash Transfer received from
+  m = msg.match(/Transfer Confirmation:\s*USD\s*([\d,.]+)\s*from\s*(.+?)\.\s*Approval Code:\s*(\S+)\s*New balance:\s*USD\s*([\d,.]+)/i);
+  if (m) {
+    const when = fromApprovalCode(m[3]);
+    if (when) return { type: 'income', category: m[2].trim(), note: null, amount: num(m[1]), balance: num(m[4]), ...when, raw: msg };
+  }
+
+  // Bank statement debit/credit
+  m = msg.match(/Your Acc XX(\d+) has been (credited|debited) with USD\s*([\d,.]+)\s*on (\d{2})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})\.\s*Ref\s*:\s*(.+?)\.\s*Balance:\s*USD\s*([\d,.]+)/i);
+  if (m) {
+    const [, , verb, amount, dd, mm, yy, hh, mi, ss, ref, balance] = m;
+    return {
+      type: verb.toLowerCase() === 'credited' ? 'income' : 'expense',
+      category: ref.trim(), note: null, amount: num(amount), balance: num(balance),
+      occurred_on: `20${yy}-${mm}-${dd}`, created_at: `20${yy}-${mm}-${dd} ${hh}:${mi}:${ss}`, raw: msg
+    };
+  }
+
+  // Loan recovery
+  m = msg.match(/A loan recovery transaction for USD\s*([\d,.]+),\s*AccNr XX(\d+) has been completed (\d{2})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})/i);
+  if (m) {
+    const [, amount, , dd, mm, yy, hh, mi, ss] = m;
+    return {
+      type: 'expense', category: 'Loan Recovery', note: null, amount: num(amount), balance: null,
+      occurred_on: `20${yy}-${mm}-${dd}`, created_at: `20${yy}-${mm}-${dd} ${hh}:${mi}:${ss}`, raw: msg
+    };
+  }
+
+  return null;
+}
+
+function parseAllMessages(text){
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  const chunks = normalized
+    .split(/(?=Payment Confirmation:|Transfer Confirmation[.:]|Your Acc|A loan recovery)/i)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const parsed = [];
+  const unmatched = [];
+  chunks.forEach(chunk => {
+    const p = parseOneMessage(chunk);
+    if (p) parsed.push(p); else unmatched.push(chunk);
+  });
+  return { parsed, unmatched };
+}
+
+function isDuplicate(p){
+  return allTransactions.some(r =>
+    r.occurred_on === p.occurred_on &&
+    Number(r.amount) === p.amount &&
+    r.type === p.type &&
+    r.category === p.category
+  );
+}
+
+let pendingImport = [];
+
+$('parse-btn')?.addEventListener('click', () => {
+  const text = $('import-text').value;
+  if (!text.trim()) return;
+  const { parsed, unmatched } = parseAllMessages(text);
+  pendingImport = parsed.map(p => ({ ...p, dup: isDuplicate(p) }));
+  renderImportPreview(unmatched);
+});
+
+function renderImportPreview(unmatched){
+  const el = $('import-results');
+  if (!pendingImport.length && !unmatched.length) {
+    el.innerHTML = '<div class="empty" style="color:var(--ink-muted)">Nothing recognized in that text.</div>';
+    return;
+  }
+  let html = '';
+  if (pendingImport.length) {
+    html += `<div class="hint" style="margin-bottom:10px;">${pendingImport.length} message(s) recognized. Greyed-out ones look like duplicates of entries already in the ledger, unchecked by default.</div>`;
+    html += pendingImport.map((p, i) => `
+      <div class="import-row ${p.dup ? 'dup' : ''}">
+        <input type="checkbox" class="imp-check" data-idx="${i}" ${p.dup ? '' : 'checked'}>
+        <div class="imp-meta">
+          <span class="imp-cat">${escapeHtml(p.category)}${p.note ? ' · ' + escapeHtml(p.note) : ''}</span>
+          <span class="imp-date">${p.occurred_on}${p.balance !== null ? ' · bal ' + fmt(p.balance) : ''}${p.dup ? ' · possible duplicate' : ''}</span>
+        </div>
+        <div class="imp-amt ${p.type}">${p.type === 'income' ? '+' : '−'}${fmt(p.amount)}</div>
+      </div>
+    `).join('');
+    html += `<button type="button" class="btn-gold" id="commit-import-btn" style="width:auto; padding:12px 24px; margin-top:14px;">Import selected</button>`;
+  }
+  if (unmatched.length) {
+    html += `<div class="hint" style="margin-top:20px; margin-bottom:10px;">${unmatched.length} message(s) I couldn't read, add these manually from the Dashboard:</div>`;
+    html += unmatched.map(u => `<div class="import-unmatched">${escapeHtml(u)}</div>`).join('');
+  }
+  el.innerHTML = html;
+
+  $('commit-import-btn')?.addEventListener('click', async () => {
+    const { data: { user } } = await sb.auth.getUser();
+    const checked = [...document.querySelectorAll('.imp-check:checked')].map(cb => pendingImport[parseInt(cb.dataset.idx, 10)]);
+    if (!checked.length) return;
+    const rows = checked.map(p => ({
+      type: p.type, category: p.category, amount: p.amount, occurred_on: p.occurred_on,
+      note: p.note, balance: p.balance, created_at: p.created_at, created_by: user.id
+    }));
+    const { error } = await sb.from('transactions').insert(rows);
+    if (error) { alert('Could not import: ' + error.message); return; }
+    $('import-text').value = '';
+    $('import-results').innerHTML = `<div class="hint">Imported ${rows.length} entr${rows.length === 1 ? 'y' : 'ies'}.</div>`;
+    pendingImport = [];
+    loadTransactions();
+  });
+}
 
 function escapeHtml(str){
   const div = document.createElement('div');
