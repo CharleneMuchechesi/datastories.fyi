@@ -816,18 +816,12 @@ async function loadGoals(){
 }
 
 function updateBalance(){
-  const withBalance = allTransactions.find(r => r.balance !== null && r.balance !== undefined);
-  const el = $('stat-balance');
-  if (withBalance) {
-    el.textContent = fmt(withBalance.balance);
-    el.className = 'value ' + (Number(withBalance.balance) < 0 ? 'neg' : 'gold');
-    return;
-  }
-  // No bank-reported balance logged yet, fall back to income minus expenses
-  const income = allTransactions.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
-  const expense = allTransactions.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
+  const rows = currentCycleRows();
+  const income = rows.filter(r => r.type === 'income').reduce((s,r) => s + Number(r.amount), 0);
+  const expense = rows.filter(r => r.type === 'expense').reduce((s,r) => s + Number(r.amount), 0);
   const net = income - expense;
-  el.textContent = fmt(net);
+  const el = $('stat-balance');
+  el.textContent = (net >= 0 ? '' : '-') + fmt(Math.abs(net));
   el.className = 'value ' + (net < 0 ? 'neg' : 'gold');
 }
 
