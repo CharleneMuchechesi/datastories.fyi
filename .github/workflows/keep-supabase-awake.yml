@@ -1,0 +1,18 @@
+name: Keep Supabase Awake
+
+# This is the "schedule" part, it tells GitHub's robot when to wake up
+# and do the chore, even if nobody opens their laptop that day.
+on:
+  schedule:
+    - cron: '0 6 * * *'   # every day at 06:00 UTC (about 08:00 in Harare)
+  workflow_dispatch:        # adds a manual "Run now" button too, for testing
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the database
+        run: |
+          curl -s -o /dev/null -w "Supabase responded with status: %{http_code}\n" \
+            "https://zxwlygksmqcrrmazople.supabase.co/rest/v1/transactions?select=id&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp4d2x5Z2tzbXFjcnJtYXpvcGxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwNTE4MTgsImV4cCI6MjA5OTYyNzgxOH0.Of2JiBCJKwuxB5_55iPoW6HfTZuxk7V43Gto0JU6zJU"
