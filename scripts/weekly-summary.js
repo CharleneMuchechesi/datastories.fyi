@@ -5,8 +5,8 @@ const nodemailer = require('nodemailer');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zxwlygksmqcrrmazople.supabase.co';
 const SERVICE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim().replace(/^["']|["']$/g, '');
-const GMAIL_USER = process.env.GMAIL_USER;
-const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+const GMAIL_USER = (process.env.GMAIL_USER || '').trim();
+const GMAIL_APP_PASSWORD = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s/g, '');
 const RECIPIENT = process.env.RECIPIENT_EMAIL;
 
 // Fail early with a clear message if a secret is missing.
