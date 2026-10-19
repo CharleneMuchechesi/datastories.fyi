@@ -4,7 +4,7 @@
 const nodemailer = require('nodemailer');
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zxwlygksmqcrrmazople.supabase.co';
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_KEY = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim().replace(/^["']|["']$/g, '');
 const GMAIL_USER = process.env.GMAIL_USER;
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 const RECIPIENT = process.env.RECIPIENT_EMAIL;
@@ -34,7 +34,7 @@ async function fetchAll(table, order) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*&order=${order}`, {
       headers: {
         apikey: SERVICE_KEY,
-        Authorization: `Bearer ${SERVICE_KEY}`,
+                ...(SERVICE_KEY.startsWith('eyJ') ? { Authorization: `Bearer ${SERVICE_KEY}` } : {}),
         'Range-Unit': 'items',
         Range: `${from}-${from + size - 1}`,
       },
